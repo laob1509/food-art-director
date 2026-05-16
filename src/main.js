@@ -725,3 +725,18 @@ window.setLang = setLang;
 window.setModel = setModel;
 window.toggleCat = toggleCat;
 window.selectFoodFromSearch = selectFoodFromSearch;
+window.addEventListener("DOMContentLoaded", async () => {
+
+  const btn = document.querySelector(".btn-start");
+
+  if (!btn) return;
+
+  btn.addEventListener("click", async () => {
+
+    if (window.$memberstackDom) {
+      await window.$memberstackDom.openModal('LOGIN');
+    }
+
+  });
+
+});
