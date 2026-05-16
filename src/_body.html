@@ -1,0 +1,687 @@
+<div class="toast" id="toast"></div>
+<div class="mood-overlay" id="mood-overlay"></div>
+<!-- WELCOME -->
+<div id="screen-welcome">
+
+  <!-- BG food image overlay -->
+  <div class="welcome-bg-overlay"></div>
+
+
+
+  <!-- Logo top -->
+  <div class="welcome-logo" style="position:relative;z-index:2;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      <span class="welcome-logo-star">✦</span>
+  </div>
+
+  <!-- Main content -->
+  <div class="welcome-content">
+    <!-- Title -->
+    <h1 class="welcome-title">Food Art<br><em>Director AI</em></h1>
+
+    <!-- Subtitle -->
+    <p class="welcome-sub">Transforme emoção em fotografia gastronômica cinematográfica com <em class="sub-highlight">inteligência artificial.</em></p>
+
+    <!-- Stats -->
+    <div class="welcome-combos">
+      <div class="combo-box">
+        <div class="combo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <div class="combo-num">18B<span style="font-size:16px">+</span></div>
+        <div class="combo-lbl">Combinações<br>Criativas</div>
+      </div>
+      <div class="combo-box">
+        <div class="combo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M17 7h5M2 17h5M17 17h5"/></svg>
+        </div>
+        <div class="combo-num">10</div>
+        <div class="combo-lbl">Passos<br>Simples</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <button class="btn-start" onclick="startWizard()">
+      <span class="btn-start-star">✦</span>
+      CRIAR MEU PROMPT →
+    </button>
+
+    <!-- Footer icons -->
+    <div class="welcome-features">
+      <div class="wf-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>Fotografia<br>Profissional</span>
+      </div>
+      <div class="wf-sep"></div>
+      <div class="wf-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 8v4l3 3"/><path d="M8 12h1M15 12h1M12 8v1M12 15v1"/></svg>
+        <span>Inteligência<br>Artificial</span>
+      </div>
+      <div class="wf-sep"></div>
+      <div class="wf-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+        <span>Foco na<br>Gastronomia</span>
+      </div>
+      <div class="wf-sep"></div>
+      <div class="wf-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20"/></svg>
+        <span>Resultados<br>Cinematográficos</span>
+      </div>
+    </div>
+
+    <!-- Tagline -->
+    <div class="welcome-tagline">CRIATIVIDADE · TECNOLOGIA · SABOR</div>
+
+  </div>
+</div>
+<!-- WIZARD -->
+<div id="screen-wizard">
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <div class="prog-lbl" id="prog-lbl">Passo 1 de 10</div>
+      <div class="prog-title" id="prog-title">O que o público vai sentir?</div>
+    </div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="prog-fill" style="width:10%"></div></div>
+    <div class="progress-dots" id="prog-dots"></div>
+  </div>
+  <!-- STEP 1 -->
+  <div class="step active" id="step-1">
+    <div class="step-num">// Passo 01</div>
+    <h2 class="step-q">O que o público vai <em>sentir?</em></h2>
+    <p class="step-hint">A emoção que a imagem vai provocar — base de toda a direção criativa</p>
+    <div class="intent-grid">
+      <div class="intent-card" data-g="intent" data-v="crave" data-color="#c0392b" data-desc="O público perde o controle. Fome antes do pensamento."><div class="i-icon svg-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v8c0 2.76 2.24 5 5 5s5-2.24 5-5V2"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="9" y1="22" x2="15" y2="22"/><line x1="7" y1="5" x2="9" y2="5"/><line x1="7" y1="8" x2="9" y2="8"/></svg></div><div class="i-name">DESEJO</div></div>
+      <div class="intent-card" data-g="intent" data-v="comfort" data-color="#e67e22" data-desc="O público desacelera. Sente segurança e memória afetiva."><div class="i-icon svg-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c0-4.97 4.03-9 9-9s9 4.03 9 9"/><path d="M3 12c0 4.97 4.03 9 9 9"/><path d="M15 12c0 1.66-1.34 3-3 3s-3-1.34-3-3"/><path d="M21 12c0 4.97-4.03 9-9 9"/></svg></div><div class="i-name">CONFORTO</div></div>
+      <div class="intent-card" data-g="intent" data-v="luxury" data-color="#b8960c" data-desc="O público admira antes de desejar. Reverência visual."><div class="i-icon svg-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="i-name">LUXO</div></div>
+      <div class="intent-card" data-g="intent" data-v="nostalgia" data-color="#8e6b3e" data-desc="O público sente saudade de algo que talvez nunca viveu."><div class="i-icon svg-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M12 8v4M10 10h4" opacity="0.3" stroke="currentColor"/></svg></div><div class="i-name">NOSTALGIA</div></div>
+      <div class="intent-card" data-g="intent" data-v="indulgence" data-color="#6c3483" data-desc="O público se entrega sem culpa. Prazer privado e lento."><div class="i-icon svg-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" opacity="0.4" fill="currentColor" stroke="none"/></svg></div><div class="i-name">PRAZER</div></div>
+      <div class="intent-card" data-g="intent" data-v="freshness" data-color="#27ae60" data-desc="O público sente o corpo mais leve só de olhar."><div class="i-icon svg-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12C8 12 4 9 4 5c0 0 4 0 8 4 4-4 8-4 8-4 0 4-4 7-8 7z"/><path d="M5 20c2-2 4-3 7-3s5 1 7 3"/></svg></div><div class="i-name">FRESCOR</div></div>
+      <div class="intent-card" data-g="intent" data-v="craft" data-color="#7d5a3c" data-desc="O público sente respeito por quem fez. Conexão humana."><div class="i-icon svg-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg></div><div class="i-name">ARTESANAL</div></div>
+      <div class="intent-card" data-g="intent" data-v="dopamine" data-color="#e91e8c" data-desc="O cérebro explode de recompensa. Reage antes de pensar."><div class="i-icon svg-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div class="i-name">IMPACTO</div></div>
+    </div>
+    <div id="intent-desc-box" style="display:none;margin-top:14px;padding:12px 14px;background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);transition:all 0.25s;">
+      <div id="intent-desc-txt" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);line-height:1.6;"></div>
+    </div>
+  </div>
+  <!-- STEP 2 -->
+  <div class="step" id="step-2">
+    <div class="step-num">// Passo 02</div>
+    <h2 class="step-q">O que você está <em>fotografando?</em></h2>
+    <p class="step-hint">Busque ou selecione a categoria</p>
+    <div class="food-search-wrap">
+      <input class="food-search" id="food-search" type="text" placeholder="🔍  Digite um alimento..." oninput="filterFoods(this.value)" autocomplete="off">
+      <div class="food-search-results" id="food-search-results" style="display:none"></div>
+    </div>
+
+    <!-- CAT: Padaria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-padaria',this)">
+        <span>🥐 Padaria / Panificadora</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-padaria" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="paofrances">🥖 Pão Francês</button>
+          <button class="opt-card" data-g="food" data-v="paointeg">🌾 Pão Integral</button>
+          <button class="opt-card" data-g="food" data-v="baguete">🥖 Baguete</button>
+          <button class="opt-card" data-g="food" data-v="brioche">🫓 Brioche</button>
+          <button class="opt-card" data-g="food" data-v="paodece">🍞 Pão de Forma</button>
+          <button class="opt-card" data-g="food" data-v="focaccia">🫓 Focaccia</button>
+          <button class="opt-card" data-g="food" data-v="paodequeijo">🧀 Pão de Queijo</button>
+          <button class="opt-card" data-g="food" data-v="paodoce">🍞 Pão Doce</button>
+          <button class="opt-card" data-g="food" data-v="paodelicia">🍞 Pão Delícia</button>
+          <button class="opt-card" data-g="food" data-v="paodebatata">🥔 Pão de Batata</button>
+          <button class="opt-card" data-g="food" data-v="paonachapa">🍞 Pão na Chapa</button>
+          <button class="opt-card" data-g="food" data-v="mistoq">🥪 Misto Quente</button>
+          <button class="opt-card" data-g="food" data-v="croissant">🥐 Croissant</button>
+          <button class="opt-card" data-g="food" data-v="tapioca">🫓 Tapioca</button>
+          <button class="opt-card" data-g="food" data-v="crepioca">🫓 Crepioca</button>
+          <button class="opt-card" data-g="food" data-v="enroladinhosal">🌭 Enroladinho Salsicha</button>
+          <button class="opt-card" data-g="food" data-v="empada">🫙 Empada</button>
+          <button class="opt-card" data-g="food" data-v="esfiha">🫓 Esfiha</button>
+          <button class="opt-card" data-g="food" data-v="bolachas">🍪 Bolachas</button>
+          <button class="opt-card" data-g="food" data-v="crostini">🥖 Crostini</button>
+          <button class="opt-card" data-g="food" data-v="grissini">🥖 Grissini</button>
+          <button class="opt-card" data-g="food" data-v="petiscodequeijo">🧀 Petisco de Queijo</button>
+          <button class="opt-card" data-g="food" data-v="biscoitopolvilho">🍪 Biscoito Polvilho</button>
+          <button class="opt-card" data-g="food" data-v="sopa">🍲 Sopa</button>
+          <button class="opt-card" data-g="food" data-v="caldo">🍵 Caldo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Doceria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-doceria',this)">
+        <span>🎂 Doceria / Confeitaria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-doceria" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="cake">🎂 Bolo</button>
+          <button class="opt-card" data-g="food" data-v="bolofatia">🎂 Bolo em Fatia</button>
+          <button class="opt-card" data-g="food" data-v="bolosemgluten">🎂 Bolo Especial</button>
+          <button class="opt-card" data-g="food" data-v="cupcake">🧁 Cupcake</button>
+          <button class="opt-card" data-g="food" data-v="brownie">🍫 Brownie</button>
+          <button class="opt-card" data-g="food" data-v="pudim">🍮 Pudim</button>
+          <button class="opt-card" data-g="food" data-v="tortadoce">🥧 Torta</button>
+          <button class="opt-card" data-g="food" data-v="tortafatia">🥧 Torta em Fatia</button>
+          <button class="opt-card" data-g="food" data-v="deliciafrutas">🍓 Delícia de Frutas</button>
+          <button class="opt-card" data-g="food" data-v="sonho">🍩 Sonho</button>
+          <button class="opt-card" data-g="food" data-v="roscadovo">🍩 Rosca de Ovos</button>
+          <button class="opt-card" data-g="food" data-v="carolina">🍮 Carolina</button>
+          <button class="opt-card" data-g="food" data-v="eclair">🍫 Éclair</button>
+          <button class="opt-card" data-g="food" data-v="milfolhas">🥐 Mil-Folhas</button>
+          <button class="opt-card" data-g="food" data-v="brigadeiro">🍫 Brigadeiro</button>
+          <button class="opt-card" data-g="food" data-v="brigadeirogourmet">🍫 Brigadeiro Gourmet</button>
+          <button class="opt-card" data-g="food" data-v="balabaiana">🍬 Bala Baiana</button>
+          <button class="opt-card" data-g="food" data-v="dessert">🍮 Sobremesa</button>
+          <button class="opt-card" data-g="food" data-v="cheesecake">🍰 Cheesecake</button>
+          <button class="opt-card" data-g="food" data-v="cinnamonroll">🌀 Cinnamon Roll</button>
+          <button class="opt-card" data-g="food" data-v="cookienyc">🍪 Cookie NYC</button>
+          <button class="opt-card" data-g="food" data-v="tiramisu">☕ Tiramisu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Cafeteria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-cafe',this)">
+        <span>☕ Cafeteria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-cafe" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="espresso">☕ Espresso</button>
+          <button class="opt-card" data-g="food" data-v="coffee">☕ Café</button>
+          <button class="opt-card" data-g="food" data-v="cafecoad">☕ Café Coado</button>
+          <button class="opt-card" data-g="food" data-v="cafeleite">☕ Café com Leite</button>
+          <button class="opt-card" data-g="food" data-v="cappuccino">☕ Cappuccino</button>
+          <button class="opt-card" data-g="food" data-v="latte">🥛 Latte</button>
+          <button class="opt-card" data-g="food" data-v="macchiato">☕ Macchiato</button>
+          <button class="opt-card" data-g="food" data-v="mocha">🍫 Mocha</button>
+          <button class="opt-card" data-g="food" data-v="coldbrew">🧊 Cold Brew</button>
+          <button class="opt-card" data-g="food" data-v="chocolatequente">🍫 Chocolate Quente</button>
+          <button class="opt-card" data-g="food" data-v="suconatural">🍊 Suco Natural</button>
+          <button class="opt-card" data-g="food" data-v="sucopop">🥤 Suco de Polpa</button>
+          <button class="opt-card" data-g="food" data-v="cha">🍵 Chá Quente</button>
+          <button class="opt-card" data-g="food" data-v="limonada">🍋 Limonada</button>
+          <button class="opt-card" data-g="food" data-v="matchalatte">🍵 Matcha Latte</button>
+          <button class="opt-card" data-g="food" data-v="icedlatte">🧊 Iced Latte</button>
+          <button class="opt-card" data-g="food" data-v="affogato">☕ Affogato</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Hamburgueria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-burger',this)">
+        <span>🍔 Hamburgueria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-burger" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="burger">🍔 Hambúrguer</button>
+          <button class="opt-card" data-g="food" data-v="sandwich">🥪 Sanduíche</button>
+          <button class="opt-card" data-g="food" data-v="savory">🥐 Salgado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Fast-food Premium -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-fastfood',this)">
+        <span>🍟 Fast-food Premium</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-fastfood" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="hotdog">🌭 Hot Dog</button>
+          <button class="opt-card" data-g="food" data-v="batatafrita">🍟 Batata Frita</button>
+          <button class="opt-card" data-g="food" data-v="onionrings">🧅 Onion Rings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Pizzaria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-pizza',this)">
+        <span>🍕 Pizzaria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-pizza" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="pizza">🍕 Pizza</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Pastelaria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-pastel',this)">
+        <span>🥟 Pastelaria / Salgados</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-pastel" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="pastel">🥟 Pastel</button>
+          <button class="opt-card" data-g="food" data-v="coxinha">🍗 Coxinha</button>
+          <button class="opt-card" data-g="food" data-v="tortafrango">🥧 Torta de Frango</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Restaurante -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-rest',this)">
+        <span>🍽️ Restaurante / Casual</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-rest" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="chicken">🍗 Frango</button>
+          <button class="opt-card" data-g="food" data-v="salad">🥗 Salada</button>
+          <button class="opt-card" data-g="food" data-v="drink">🥤 Bebida</button>
+          <button class="opt-card" data-g="food" data-v="generic">🍽️ Genérico</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Brasileiros -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-br',this)">
+        <span>🇧🇷 Brasileiros Especiais</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-br" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="acai">🫐 Açaí</button>
+          <button class="opt-card" data-g="food" data-v="brigadeiro">🍫 Brigadeiro</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- STEP 3 -->
+  <div class="step" id="step-3">
+    <div class="step-num">// Passo 03</div>
+    <h2 class="step-q">Qual a <em>linguagem visual</em>?</h2>
+    <p class="step-hint">A estética e atmosfera que vão conduzir toda a imagem</p>
+
+    <span class="slbl" style="margin-top:0">Ambiente &amp; Atmosfera</span>
+    <p class="step-hint" style="margin-top:-4px;margin-bottom:10px">O cenário onde a luz e o espaço definem o tom</p>
+    <div class="style-grid">
+      <div class="style-card" data-g="style" data-v="dark" data-desc="Escuridão absoluta como palco. A luz existe apenas para revelar o que importa — drama, mistério e sofisticação."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a7 7 0 1 0 0 14A7 7 0 0 0 12 2z" fill="currentColor" opacity="0.2"/><path d="M12 3a9 9 0 0 1 0 18A9 9 0 0 0 12 3z"/></svg></div><div class="style-lbl">Estúdio Escuro</div></div>
+      <div class="style-card" data-g="style" data-v="clean" data-desc="Fundo neutro onde o alimento é o único protagonista. Pureza visual que valoriza cada detalhe."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg></div><div class="style-lbl">Fundo Limpo</div></div>
+      <div class="style-card" data-g="style" data-v="rustic" data-desc="Madeira com textura e história visível. Calor artesanal que transmite autenticidade e conexão humana."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="style-lbl">Rústico</div></div>
+      <div class="style-card" data-g="style" data-v="cinematic" data-desc="Chiaroscuro extremo — a luz é o roteiro. Alto contraste que transforma comida em cena de filme."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M17 7h5M2 17h5M17 17h5"/></svg></div><div class="style-lbl">Cinematográfico</div></div>
+      <div class="style-card" data-g="style" data-v="candle" data-desc="Apenas a vela ilumina. Sombras orgânicas e calor intimista que criam uma atmosfera quase proibida."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c0 0-2 2-2 4s2 2 2 4 2-2 2-4-2-4-2-4z"/><rect x="9" y="10" width="6" height="12" rx="1"/><line x1="6" y1="22" x2="18" y2="22"/></svg></div><div class="style-lbl">Luz de Vela</div></div>
+      <div class="style-card" data-g="style" data-v="natural" data-desc="Luz de janela — suave, honesta e direcional. A manhã real sem artificialidade."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div><div class="style-lbl">Luz Natural</div></div>
+    </div>
+
+    <span class="slbl">Composição &amp; Narrativa</span>
+    <p class="step-hint" style="margin-top:-4px;margin-bottom:10px">Como o alimento se posiciona dentro do frame</p>
+    <div class="style-grid" style="grid-template-columns:repeat(2,1fr)">
+      <div class="style-card" data-g="style" data-v="flatlay" data-desc="Câmera diretamente de cima. Composição geométrica e editorial — o alimento vira padrão visual."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg></div>
+        <div class="style-lbl">Vista de Cima</div>
+        <div class="style-sub">câmera aérea · flat lay</div>
+      </div>
+      <div class="style-card" data-g="style" data-v="hand" data-desc="Uma mão humana entra no frame. Presença real que cria conexão imediata com quem olha."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg></div>
+        <div class="style-lbl">Com Mão</div>
+        <div class="style-sub">presença humana · narrativa</div>
+      </div>
+      <div class="style-card" data-g="style" data-v="extreme_crop" data-desc="Apenas um fragmento do alimento. O detalhe é tudo — textura e forma como linguagem pura."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 2 2"/><polyline points="2 6 6 2"/><polyline points="18 9 18 2 22 2"/><polyline points="22 6 18 2"/><polyline points="6 15 6 22 2 22"/><polyline points="2 18 6 22"/><polyline points="18 15 18 22 22 22"/><polyline points="22 18 18 22"/></svg></div>
+        <div class="style-lbl">Corte Extremo</div>
+        <div class="style-sub">crop agressivo · detalhe</div>
+      </div>
+      <div class="style-card" data-g="style" data-v="table_scene" data-desc="O alimento existe num contexto humano vivo. Calor social e autenticidade de um momento real."><div class="style-thumb-svg"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="style-lbl">Cena de Mesa</div>
+        <div class="style-sub">refeição compartilhada</div>
+      </div>
+    </div>
+  </div>
+  <!-- STEP 4 -->
+  <div class="step" id="step-4">
+    <div class="step-num">// Passo 04</div>
+    <h2 class="step-q">Ângulo e <em>intensidade</em></h2>
+    <p class="step-hint">Posição da câmera e nível de drama da luz</p>
+
+    <span class="slbl" style="margin-top:0">Ângulo da câmera</span>
+    <div class="angle-grid">
+      <button class="angle-card active" data-g="angle" data-v="eyelevel"
+        data-desc="Câmera na altura do alimento. Perspectiva natural — como o olho humano vê."><div class="angle-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <div class="angle-name">Nível dos Olhos</div>
+        <div class="angle-sub">natural · equilibrado</div>
+      </button>
+      <button class="angle-card" data-g="angle" data-v="lowangle"
+        data-desc="Câmera abaixo olhando para cima. O alimento ganha presença heroica e monumental."><div class="angle-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/><line x1="12" y1="3" x2="12" y2="15"/><line x1="3" y1="21" x2="21" y2="21"/></svg></div>
+        <div class="angle-name">Ângulo Baixo</div>
+        <div class="angle-sub">heroico · imponente</div>
+      </button>
+      <button class="angle-card" data-g="angle" data-v="q45"
+        data-desc="O ângulo mais narrativo. Mostra topo e frente ao mesmo tempo — revela profundidade e camadas."><div class="angle-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>
+        <div class="angle-name">Diagonal 45°</div>
+        <div class="angle-sub">narrativo · profundidade</div>
+      </button>
+      <button class="angle-card" data-g="angle" data-v="overhead"
+        data-desc="Câmera diretamente de cima. O alimento vira composição gráfica — flat lay editorial."><div class="angle-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg></div>
+        <div class="angle-name">Vista Aérea</div>
+        <div class="angle-sub">gráfico · editorial</div>
+      </button>
+      <button class="angle-card" data-g="angle" data-v="macro"
+        data-desc="Câmera muito próxima. Cada textura, gota e imperfeição preenche o quadro inteiro."><div class="angle-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        <div class="angle-name">Macro</div>
+        <div class="angle-sub">textura · detalhe extremo</div>
+      </button>
+    </div>
+    <div id="angle-desc-box" style="display:none;margin-top:10px;padding:12px 14px;background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);border-left:3px solid var(--amber);transition:all 0.2s;">
+      <div id="angle-desc-txt" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);line-height:1.6;"></div>
+    </div>
+
+    <span class="slbl" style="margin-top:20px">Intensidade do mood</span>
+    <div class="int-track">
+      <button class="int-pill" data-g="intensity" data-v="subtle"
+        style="--pill-color:rgba(120,120,120,0.15);--pill-border:rgba(140,140,140,0.3)">
+        <div class="int-pill-name">Sutil</div>
+        <div class="int-pill-sub">elegante · delicado</div>
+      </button>
+      <button class="int-pill active" data-g="intensity" data-v="balanced"
+        style="--pill-color:rgba(160,100,8,0.1);--pill-border:rgba(200,134,10,0.3)">
+        <div class="int-pill-name">Equilibrado</div>
+        <div class="int-pill-sub">apelo · comercial</div>
+      </button>
+      <button class="int-pill" data-g="intensity" data-v="dramatic"
+        style="--pill-color:rgba(180,70,8,0.1);--pill-border:rgba(220,100,8,0.3)">
+        <div class="int-pill-name">Dramático</div>
+        <div class="int-pill-sub">contraste · presença</div>
+      </button>
+      <button class="int-pill" data-g="intensity" data-v="ultra"
+        style="--pill-color:rgba(200,40,8,0.1);--pill-border:rgba(220,60,8,0.3)">
+        <div class="int-pill-name">Extremo</div>
+        <div class="int-pill-sub">visceral · máximo</div>
+      </button>
+    </div>
+  </div>
+  <!-- STEP 5 -->
+  <div class="step" id="step-5">
+    <div class="step-num">// Passo 05</div>
+    <h2 class="step-q">Formato de <em>saída</em></h2>
+    <p class="step-hint">Para onde esta imagem vai?</p>
+
+    <span class="slbl" style="margin-top:0">Redes Sociais</span>
+    <div class="fmt-grid">
+      <div class="fmt-card" data-g="format" data-v="feed" data-desc="Formato vertical ideal para feed do Instagram e cardápios digitais. Ocupa mais espaço na timeline."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="15" x2="12" y2="15"/></svg></div><div class="fmt-name">Feed</div>
+        <div class="fmt-res">4:5 · 1080×1350</div><div class="fmt-ctx">Instagram · Cardápio</div>
+      </div>
+      <div class="fmt-card" data-g="format" data-v="story" data-desc="Tela cheia vertical para Stories, Reels e TikTok. Máximo impacto em dispositivos móveis."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="1" width="10" height="22" rx="2"/><line x1="10" y1="5" x2="14" y2="5"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg></div><div class="fmt-name">Story / Reels</div>
+        <div class="fmt-res">9:16 · 1080×1920</div><div class="fmt-ctx">Stories · TikTok · Reels</div>
+      </div>
+      <div class="fmt-card" data-g="format" data-v="square" data-desc="Formato quadrado clássico do Instagram. Versátil para feed, WhatsApp e cardápios."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="12" y2="16"/></svg></div><div class="fmt-name">Quadrado</div>
+        <div class="fmt-res">1:1 · 1080×1080</div><div class="fmt-ctx">Instagram · WhatsApp</div>
+      </div>
+      <div class="fmt-card" data-g="format" data-v="pinterest" data-desc="Formato vertical longo ideal para Pinterest. Alta visibilidade e forte apelo gastronômico."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="12" y2="14"/></svg></div><div class="fmt-name">Pinterest</div>
+        <div class="fmt-res">2:3 · 1000×1500</div><div class="fmt-ctx">Pinterest · Blog</div>
+      </div>
+    </div>
+
+    <span class="slbl">Digital &amp; Marketing</span>
+    <div class="fmt-grid">
+      <div class="fmt-card" data-g="format" data-v="banner" data-desc="Formato horizontal para banners de website, apresentações e painéis digitais."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="14" y2="10"/><line x1="6" y1="14" x2="10" y2="14"/></svg></div><div class="fmt-name">Banner</div>
+        <div class="fmt-res">16:9 · 1920×1080</div><div class="fmt-ctx">Website · Painel</div>
+      </div>
+      <div class="fmt-card" data-g="format" data-v="widescreen" data-desc="Ultra-wide para hero de websites e capas de plataformas. Presença visual máxima."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="7" width="22" height="10" rx="2"/><line x1="5" y1="11" x2="15" y2="11"/><line x1="5" y1="14" x2="9" y2="14"/></svg></div><div class="fmt-name">Widescreen</div>
+        <div class="fmt-res">21:9 · 2560×1080</div><div class="fmt-ctx">Hero site · Capa</div>
+      </div>
+      <div class="fmt-card" data-g="format" data-v="thumbnail" data-desc="Formato YouTube otimizado para thumbnails de receitas e canais gastronômicos."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><polygon points="10 9 16 12 10 15 10 9" fill="currentColor" opacity="0.5"/></svg></div><div class="fmt-name">Thumbnail</div>
+        <div class="fmt-res">16:9 · 1280×720</div><div class="fmt-ctx">YouTube · Vídeo</div>
+      </div>
+      <div class="fmt-card" data-g="format" data-v="email" data-desc="Formato otimizado para newsletters e email marketing. Largura padrão 600px."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg></div><div class="fmt-name">Email</div>
+        <div class="fmt-res">600px · Newsletter</div><div class="fmt-ctx">Email marketing</div>
+      </div>
+    </div>
+
+    <span class="slbl">Impressão</span>
+    <div class="fmt-grid">
+      <div class="fmt-card" data-g="format" data-v="menu_a4" data-desc="Formato A4 para cardápios físicos e materiais impressos. Alta resolução obrigatória."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></div><div class="fmt-name">Cardápio A4</div>
+        <div class="fmt-res">A4 · 2480×3508</div><div class="fmt-ctx">Menu físico · Impressão</div>
+      </div>
+      <div class="fmt-card" data-g="format" data-v="outdoor" data-desc="Grande formato para outdoors, banners de rua e fachadas. Impacto máximo em escala real."><div class="fmt-icon svg-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="fmt-name">Outdoor</div>
+        <div class="fmt-res">Livre · Alta res</div><div class="fmt-ctx">Outdoor · Fachada</div>
+      </div>
+    </div>
+
+    <div id="fmt-desc-box" style="display:none;margin-top:14px;padding:12px 14px;background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);border-left:3px solid var(--amber);transition:all 0.2s;">
+      <div id="fmt-desc-txt" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);line-height:1.6;"></div>
+    </div>
+  </div>
+  <!-- STEP 6 -->
+  <div class="step" id="step-6">
+    <div class="step-num">// Passo 06</div>
+    <h2 class="step-q">Contexto da <em>cena</em></h2>
+    <p class="step-hint">A situação em que o alimento está sendo fotografado</p>
+    <div class="ctx-grid">
+      <div class="ctx-card active" data-g="context" data-v="normal" data-desc="O alimento é o protagonista absoluto. Sem distração — foco total no produto."><div class="ctx-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="ctx-name">Normal</div>
+      </div>
+      <div class="ctx-card" data-g="context" data-v="combo" data-desc="Produto principal com bebida e acompanhamento. Composição em grupo orgânico e apetitoso."><div class="ctx-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg></div><div class="ctx-name">Combo</div>
+      </div>
+      <div class="ctx-card" data-g="context" data-v="seasonal" data-desc="O alimento em contexto de data especial. Decoração e atmosfera sazonais integradas à cena."><div class="ctx-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="ctx-name">Sazonal</div>
+      </div>
+      <div class="ctx-card" data-g="context" data-v="process" data-desc="Bastidores do preparo — mãos, utensílios e ingredientes em ação. Autenticidade máxima."><div class="ctx-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><path d="M8 13h8M8 17h5"/></svg></div><div class="ctx-name">Bastidores</div>
+      </div>
+      <div class="ctx-card" data-g="context" data-v="human" data-desc="Momento humano real — alguém segurando, servindo ou provando. Conexão emocional imediata."><div class="ctx-icon svg-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg></div><div class="ctx-name">Momento Humano</div>
+      </div>
+    </div>
+
+    <div id="ctx-desc-box" style="display:none;margin-top:14px;padding:12px 14px;background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);border-left:3px solid var(--amber);transition:all 0.2s;">
+      <div id="ctx-desc-txt" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);line-height:1.6;"></div>
+    </div>
+
+    <div id="seasonal-opts" style="display:none;margin-top:16px">
+      <span class="slbl" style="margin-top:0">Qual data especial?</span>
+      <div class="opts-grid">
+        <button class="opt-card" data-g="seasonal" data-v="christmas" title="Vermelho, verde, dourado — atmosfera mágica">🎄 Natal</button>
+        <button class="opt-card" data-g="seasonal" data-v="valentine" title="Rosas, vela — atmosfera romântica">💝 Namorados</button>
+        <button class="opt-card" data-g="seasonal" data-v="easter" title="Tons pastel — leveza primaveril">🐣 Páscoa</button>
+        <button class="opt-card" data-g="seasonal" data-v="junina" title="Bandeirinhas, tons quentes — festa brasileira">🌽 Festa Junina</button>
+        <button class="opt-card" data-g="seasonal" data-v="mothers" title="Flores, rosa e branco — delicadeza e carinho">🌹 Dia das Mães</button>
+        <button class="opt-card" data-g="seasonal" data-v="newyear" title="Champagne, dourado e prata — celebração premium">🎆 Ano Novo</button>
+        <button class="opt-card" data-g="seasonal" data-v="halloween" title="Laranja, preto, abóboras — dark e impactante">🎃 Halloween</button>
+        <button class="opt-card" data-g="seasonal" data-v="fathers" title="Tons robustos, masculinos — força e presença">👨‍👧 Dia dos Pais</button>
+        <button class="opt-card" data-g="seasonal" data-v="wedding" title="Branco, dourado, flores — elegância e celebração">👰 Casamento</button>
+        <button class="opt-card" data-g="seasonal" data-v="birthday" title="Velas, confetes, colorido — festa e alegria">🎂 Aniversário</button>
+        <button class="opt-card" data-g="seasonal" data-v="blackfriday" title="Preto, vermelho, urgência visual — impacto máximo">🛍️ Black Friday</button>
+      </div>
+    </div>
+  </div>
+  <!-- STEP 7 -->
+  <div class="step" id="step-7">
+    <div class="step-num">// Passo 07</div>
+    <h2 class="step-q">Como a câmera vai <em>olhar?</em></h2>
+    <p class="step-hint">A personalidade fotográfica e a lente</p>
+    <span class="slbl" style="margin-top:0">Personalidade da câmera</span>
+    <div class="photo-grid">
+      <div class="photo-card" data-g="photo" data-v="luxury85">
+        <div class="p-lens">85mm · f/1.4</div>
+        <div class="p-name">Editorial de Luxo</div>
+        <div class="p-desc">Lente que deixa o fundo desfocado e suave — o alimento fica em destaque total, como em revista premium</div>
+      </div>
+      <div class="photo-card" data-g="photo" data-v="handheld35">
+        <div class="p-lens">35mm · câmera livre</div>
+        <div class="p-name">Documental Culinário</div>
+        <div class="p-desc">Lente que capta o ambiente junto com o alimento — parece uma foto tirada na hora, real e humana</div>
+      </div>
+      <div class="photo-card" data-g="photo" data-v="macro100">
+        <div class="p-lens">100mm · macro</div>
+        <div class="p-name">Macro Sensorial</div>
+        <div class="p-desc">Câmera muito próxima — cada textura, gota e detalhe fica enorme e irresistível</div>
+      </div>
+      <div class="photo-card" data-g="photo" data-v="editorial50">
+        <div class="p-lens">50mm · f/5.6</div>
+        <div class="p-name">Estilo Artesanal</div>
+        <div class="p-desc">Lente que reproduz exatamente o que o olho humano vê — natural, sem exagero, equilibrada</div>
+      </div>
+      <div class="photo-card" data-g="photo" data-v="michelin">
+        <div class="p-lens">70mm · f/2.8</div>
+        <div class="p-name">Campanha Gastronômica</div>
+        <div class="p-desc">Lente que valoriza a apresentação do prato — mostra a estrutura toda com fundo suavemente desfocado</div>
+      </div>
+      <div class="photo-card" data-g="photo" data-v="street28">
+        <div class="p-lens">28mm · grande angular</div>
+        <div class="p-name">Realismo de Rua</div>
+        <div class="p-desc">Lente aberta que captura tudo ao redor — o alimento existe no mundo real, não num estúdio</div>
+      </div>
+      <div class="photo-card" data-g="photo" data-v="morning">
+        <div class="p-lens">50mm · luz natural</div>
+        <div class="p-name">Manhã Íntima</div>
+        <div class="p-desc">Luz suave de janela pela manhã — cria sombras delicadas e uma atmosfera silenciosa e acolhedora</div>
+      </div>
+      <div class="photo-card" data-g="photo" data-v="cinenoir">
+        <div class="p-lens">85mm · anamórfico</div>
+        <div class="p-name">Cinema Noir</div>
+        <div class="p-desc">Lente de cinema que cria fundo oval desfocado e reflexos de luz horizontais — parece filme de verdade</div>
+      </div>
+    </div>
+    <span class="step-skip" onclick="skipStep()">Sem preferência →</span>
+  </div>
+  <!-- STEP 8 -->
+  <div class="step" id="step-8">
+    <div class="step-num">// Passo 08</div>
+    <h2 class="step-q">Onde vai ser <em>fotografado?</em></h2>
+    <p class="step-hint">O universo físico onde a cena acontece</p>
+
+    <span class="slbl" style="margin-top:0">🥐 Padarias</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="morning_bakery"><div class="env-icon">🌅</div><div class="env-name">Padaria Artesanal da Manhã</div><div class="env-mats">Luz lateral dourada · linho cru · farinha no ar · silêncio quente das 6h</div></div>
+      <div class="env-card" data-g="env" data-v="french_bakery"><div class="env-icon">🥖</div><div class="env-name">Padaria Francesa</div><div class="env-mats">Mármore branco · luz de vitrine · cestos de vime · tons creme e dourado</div></div>
+      <div class="env-card" data-g="env" data-v="brazilian_bakery"><div class="env-icon">🍞</div><div class="env-name">Padaria Brasileira</div><div class="env-mats">Balcão de vidro · luz quente · movimento matinal · cheiro de pão fresco</div></div>
+    </div></div>
+
+    <span class="slbl">🎂 Confeitarias</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="patisserie"><div class="env-icon">🍰</div><div class="env-name">Confeitaria Clássica</div><div class="env-mats">Mármore rosê · fita de cetim · luz suave · delicadeza francesa</div></div>
+      <div class="env-card" data-g="env" data-v="modern_pastry"><div class="env-icon">🧁</div><div class="env-name">Confeitaria Moderna</div><div class="env-mats">Concreto claro · acrílico · luz LED · apresentação contemporânea</div></div>
+      <div class="env-card" data-g="env" data-v="luxury_pastry"><div class="env-icon">👑</div><div class="env-name">Confeitaria Premium</div><div class="env-mats">Veludo e ouro · luz pontual · produto como joia · exclusividade total</div></div>
+    </div></div>
+
+    <span class="slbl">🍫 Docerias</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="chocolate_atelier"><div class="env-icon">🍫</div><div class="env-name">Doceria de Chocolate</div><div class="env-mats">Madeira escura · papel kraft · luz âmbar · cacau e ganache no ambiente</div></div>
+      <div class="env-card" data-g="env" data-v="candy_shop"><div class="env-icon">🍬</div><div class="env-name">Doceria Colorida</div><div class="env-mats">Fundo pastel · props coloridos · luz alta · alegria e energia visual</div></div>
+      <div class="env-card" data-g="env" data-v="artisan_sweet"><div class="env-icon">🫙</div><div class="env-name">Doceria Artesanal</div><div class="env-mats">Madeira clara · potes de vidro · luz natural suave · doçura caseira</div></div>
+    </div></div>
+
+    <span class="slbl">☕ Cafés</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="european_cafe"><div class="env-icon">🪟</div><div class="env-name">Café Europeu Editorial</div><div class="env-mats">Janela com luz natural · tons creme envelhecidos · profundidade urbana</div></div>
+      <div class="env-card" data-g="env" data-v="specialty_coffee"><div class="env-icon">☕</div><div class="env-name">Café Especial Minimalista</div><div class="env-mats">Concreto claro · madeira clara · luz difusa · estética contemporânea</div></div>
+      <div class="env-card" data-g="env" data-v="cozy_cafe"><div class="env-icon">🕯️</div><div class="env-name">Café Aconchegante</div><div class="env-mats">Luz de vela · livros ao fundo · calor de tarde de domingo</div></div>
+    </div></div>
+
+    <span class="slbl">🍽️ Restaurantes</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="fine_dining"><div class="env-icon">💎</div><div class="env-name">Alta Gastronomia</div><div class="env-mats">Linho branco · porcelana fina · prata · luz de vela controlada</div></div>
+      <div class="env-card" data-g="env" data-v="luxury_steakhouse"><div class="env-icon">🥩</div><div class="env-name">Churrascaria de Luxo</div><div class="env-mats">Nogueira escura · couro · luz âmbar baixa · reflexos controlados</div></div>
+      <div class="env-card" data-g="env" data-v="tratoria"><div class="env-icon">🍝</div><div class="env-name">Trattoria Italiana</div><div class="env-mats">Pedra rústica · toalha xadrez · vela · calor de osteria italiana</div></div>
+      <div class="env-card" data-g="env" data-v="japanese_counter"><div class="env-icon">🍱</div><div class="env-name">Balcão Japonês</div><div class="env-mats">Pedra fria · madeira clara · espaço vazio intencional · precisão</div></div>
+    </div></div>
+
+    <span class="slbl">🌙 Bares & Noturno</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="dark_bar"><div class="env-icon">🥃</div><div class="env-name">Bar Escuro & Lounge</div><div class="env-mats">Mármore negro · cobre · luz pontual · atmosfera noturna exclusiva</div></div>
+      <div class="env-card" data-g="env" data-v="rooftop_bar"><div class="env-icon">🌃</div><div class="env-name">Rooftop Noturno</div><div class="env-mats">Luzes da cidade ao fundo · concreto · ambiente urbano premium</div></div>
+      <div class="env-card" data-g="env" data-v="wine_bar"><div class="env-icon">🍷</div><div class="env-name">Adega & Wine Bar</div><div class="env-mats">Garrafas ao fundo · madeira escura · luz âmbar · elegância noturna</div></div>
+    </div></div>
+
+    <span class="slbl">🔪 Cozinhas</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="culinary_workshop"><div class="env-icon">👨‍🍳</div><div class="env-name">Ateliê Culinário</div><div class="env-mats">Aço escovado · farinha espalhada · calor humano · trabalho real</div></div>
+      <div class="env-card" data-g="env" data-v="home_kitchen"><div class="env-icon">🏠</div><div class="env-name">Cozinha Caseira</div><div class="env-mats">Madeira rústica · cerâmica imperfeita · luz natural · memória afetiva</div></div>
+      <div class="env-card" data-g="env" data-v="open_kitchen"><div class="env-icon">🔥</div><div class="env-name">Cozinha Aberta</div><div class="env-mats">Fogo visível · aço · movimento · energia de restaurante ao vivo</div></div>
+    </div></div>
+
+    <span class="slbl">🌆 Rua & Externo</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="street_food"><div class="env-icon">🌮</div><div class="env-name">Barraca de Rua</div><div class="env-mats">Luz mista · fumaça real · imperfeição · textura urbana autêntica</div></div>
+      <div class="env-card" data-g="env" data-v="food_truck"><div class="env-icon">🚚</div><div class="env-name">Food Truck</div><div class="env-mats">Metal colorido · luz do dia · ambiente de feira · energia vibrante</div></div>
+      <div class="env-card" data-g="env" data-v="garden_table"><div class="env-icon">🌿</div><div class="env-name">Mesa no Jardim</div><div class="env-mats">Luz natural difusa · vegetação ao fundo · leveza e frescor</div></div>
+      <div class="env-card" data-g="env" data-v="market"><div class="env-icon">🎪</div><div class="env-name">Feira & Mercado</div><div class="env-mats">Cores vibrantes · movimento · autenticidade brasileira</div></div>
+    </div></div>
+
+    <span class="slbl">📸 Estilos Editoriais</span>
+    <div class="env-carousel-wrap"><div class="env-carousel">
+      <div class="env-card" data-g="env" data-v="scandinavian"><div class="env-icon">🤍</div><div class="env-name">Escandinavo Moderno</div><div class="env-mats">Concreto claro · madeira branca · luz difusa · funcionalidade como estética</div></div>
+      <div class="env-card" data-g="env" data-v="dark_studio"><div class="env-icon">🌑</div><div class="env-name">Estúdio Escuro Premium</div><div class="env-mats">Fundo preto absoluto · superfície reflexiva · luz única e precisa</div></div>
+      <div class="env-card" data-g="env" data-v="white_studio"><div class="env-icon">⬜</div><div class="env-name">Estúdio Branco Clean</div><div class="env-mats">Fundo branco contínuo · sem horizonte · luz uniforme · produto em destaque</div></div>
+      <div class="env-card" data-g="env" data-v="vintage_table"><div class="env-icon">🕰️</div><div class="env-name">Mesa Vintage</div><div class="env-mats">Props antigos · madeira gasta · nostalgia e memória afetiva</div></div>
+    </div></div>
+
+    <span class="step-skip" onclick="skipStep()">Sem preferência →</span>
+  </div>
+  <!-- STEP 9 -->
+  <div class="step" id="step-9">
+    <div class="step-num">// Passo 09</div>
+    <h2 class="step-q">Configurações <em>avançadas</em></h2>
+    <p class="step-hint">Opcionais — aumentam precisão e qualidade do prompt</p>
+    <div class="tog-list">
+      <div class="tog-row"><div><div class="tog-lbl">📷 Óptica Profissional</div><div class="tog-desc">Focal, abertura, sensor, profundidade de campo</div></div><label class="tog"><input type="checkbox" id="t-cam"><span class="tsldr"></span></label></div>
+      <div class="tog-row"><div><div class="tog-lbl">🍽️ Motor de Food Styling</div><div class="tog-desc">Molhos, derretimento, micro-detalhes</div></div><label class="tog"><input type="checkbox" id="t-sty"><span class="tsldr"></span></label></div>
+      <div class="tog-row" style="border-color:rgba(160,100,8,.15);background:rgba(160,100,8,.03)"><div><div class="tog-lbl" style="color:var(--amber-l)">🛡️ Proteção de Realismo</div><div class="tog-desc">Imperfeições orgânicas · Anti-CGI</div></div><label class="tog"><input type="checkbox" id="t-rea" checked><span class="tsldr"></span></label></div>
+      <div class="tog-row"><div><div class="tog-lbl">🚫 Negativos Inteligentes</div><div class="tog-desc">Específicos por tipo de alimento</div></div><label class="tog"><input type="checkbox" id="t-neg" checked><span class="tsldr"></span></label></div>
+      <div class="tog-row"><div><div class="tog-lbl">🎬 Intensificador Cinematográfico</div><div class="tog-desc">Prioridade máxima: realismo e anti-CGI</div></div><label class="tog"><input type="checkbox" id="t-str"><span class="tsldr"></span></label></div>
+    </div>
+    <textarea class="nota" id="nota" placeholder="Observação livre: vapor, gotículas, fundo específico..."></textarea>
+  </div>
+  <!-- STEP 10 -->
+  <div class="step" id="step-10">
+    <div class="step-num">// Passo 10</div>
+    <h2 class="step-q">Prompt <em>gerado</em></h2>
+    <p class="step-hint">Seu prompt profissional pronto para usar</p>
+
+    <!-- MODELO -->
+    <div class="model-row">
+      <button class="model-btn active" onclick="setModel('gpt',this)"><div class="mdot" style="background:#10a37f"></div><div class="mname">GPT Image</div></button>
+      <button class="model-btn" onclick="setModel('gemini',this)"><div class="mdot" style="background:#4285f4"></div><div class="mname">Gemini</div></button>
+      <button class="model-btn" onclick="setModel('midjourney',this)"><div class="mdot" style="background:#7289da"></div><div class="mname">Midjourney</div></button>
+      <button class="model-btn" onclick="setModel('flux',this)"><div class="mdot" style="background:#ff6b35"></div><div class="mname">Flux</div></button>
+      <button class="model-btn" onclick="setModel('sdxl',this)"><div class="mdot" style="background:#9b59b6"></div><div class="mname">SDXL</div></button>
+      <button class="model-btn" onclick="setModel('dalle',this)"><div class="mdot" style="background:#3498db"></div><div class="mname">DALL-E</div></button>
+    </div>
+
+    <!-- RESUMO -->
+    <div class="summary-bar" id="summary-bar"></div>
+
+    <!-- MOOD SUMMARY — IMPACTANTE -->
+    <div class="mood-summary-full" id="mood-summary" style="display:none">
+      <div class="mood-summary-header">
+        <div class="mood-summary-icon" id="mood-summary-icon">✦</div>
+        <div class="mood-summary-label">// direção visual desta imagem</div>
+      </div>
+      <div class="mood-summary-txt" id="mood-summary-txt"></div>
+    </div>
+
+    <!-- OUTPUT CARD -->
+    <div class="output-card">
+      <div class="output-head">
+        <div class="output-lbl">// prompt gerado</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="btn-variation" id="btn-variation" onclick="generateVariation()" style="display:none">↺ Variação</button>
+          <div class="lang-btns">
+            <button class="lang-btn active" id="lpt" onclick="setLang('pt')">PT</button>
+            <button class="lang-btn" id="len" onclick="setLang('en')">EN</button>
+          </div>
+        </div>
+      </div>
+      <div class="output-body" id="output-body">
+        <div class="gen-state"><div class="gen-dots"><div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div></div><div class="gen-txt">Gerando seu prompt...</div></div>
+      </div>
+      <div class="output-tags" id="output-tags" style="display:none"></div>
+    </div>
+
+    <!-- BOTÃO VARIAÇÃO DESTACADO -->
+    <button class="btn-variation-full" id="btn-variation-full" onclick="generateVariation()" style="display:none">
+      ↺ Gerar nova variação do prompt
+    </button>
+
+  </div>
+</div>
+<!-- NAV -->
+<div class="nav-bar" id="nav-bar" style="display:none">
+  <div class="nav-inner" id="nav-inner">
+    <button class="btn-back" id="btn-back" onclick="goBack()">← Voltar</button>
+    <button class="btn-next" id="btn-next" onclick="goNext()">Próximo →</button>
+  </div>
+</div>
