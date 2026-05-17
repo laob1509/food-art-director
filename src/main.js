@@ -226,7 +226,9 @@ function rotatePlaceholder() {
   nota.placeholder = PLACEHOLDERS[idx];
 }
 
-function startWizard(){
+async function startWizard(){
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { openAuthModal('login'); return; }
   document.getElementById('screen-welcome').style.display='none';
   document.getElementById('screen-wizard').style.display='block';
   document.getElementById('nav-bar').style.display='flex';
@@ -725,97 +727,320 @@ window.setLang = setLang;
 window.setModel = setModel;
 window.toggleCat = toggleCat;
 window.selectFoodFromSearch = selectFoodFromSearch;
+// ── AUTH MODAL ────────────────────────────────────────────────────────────────
+function createAuthModal() {
+  if (document.getElementById('auth-modal')) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'auth-modal';
+  modal.innerHTML = `
+    <div class="auth-backdrop" id="auth-backdrop"></div>
+    <div class="auth-box" id="auth-box">
+      <button class="auth-close" id="auth-close">✕</button>
+
+      <!-- LOGO -->
+      <div class="auth-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span class="auth-logo-star">✦</span>
+      </div>
+
+      <!-- TABS -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="authSwitchTab('login')">Entrar</button>
+        <button class="auth-tab" id="tab-signup" onclick="authSwitchTab('signup')">Criar conta</button>
+      </div>
+
+      <!-- FORM LOGIN -->
+      <div id="auth-form-login">
+        <div class="auth-title">Bem-vindo de volta</div>
+        <div class="auth-sub">Acesse sua conta para continuar</div>
+        <div class="auth-field">
+          <label class="auth-label">Email</label>
+          <input class="auth-input" id="login-email" type="email" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Senha</label>
+          <input class="auth-input" id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div class="auth-error" id="login-error"></div>
+        <button class="auth-btn" id="login-btn" onclick="authLogin()">
+          <span id="login-btn-txt">Entrar</span>
+        </button>
+        <div class="auth-switch">Não tem conta? <span onclick="authSwitchTab('signup')">Criar conta</span></div>
+      </div>
+
+      <!-- FORM SIGNUP -->
+      <div id="auth-form-signup" style="display:none">
+        <div class="auth-title">Criar sua conta</div>
+        <div class="auth-sub">Comece a criar prompts cinematográficos</div>
+        <div class="auth-field">
+          <label class="auth-label">Email</label>
+          <input class="auth-input" id="signup-email" type="email" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Senha</label>
+          <input class="auth-input" id="signup-password" type="password" placeholder="mínimo 6 caracteres" autocomplete="new-password">
+        </div>
+        <div class="auth-error" id="signup-error"></div>
+        <button class="auth-btn" id="signup-btn" onclick="authSignup()">
+          <span id="signup-btn-txt">Criar conta</span>
+        </button>
+        <div class="auth-switch">Já tem conta? <span onclick="authSwitchTab('login')">Entrar</span></div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div id="auth-success" style="display:none">
+        <div class="auth-success-ico">✦</div>
+        <div class="auth-title">Conta criada!</div>
+        <div class="auth-sub">Verifique seu email para confirmar o cadastro, depois faça login.</div>
+        <button class="auth-btn" onclick="authSwitchTab('login')">Ir para login</button>
+      </div>
+
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Fechar no backdrop
+  document.getElementById('auth-backdrop').addEventListener('click', closeAuthModal);
+  document.getElementById('auth-close').addEventListener('click', closeAuthModal);
+
+  // Enter nos inputs
+  ['login-email','login-password'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') authLogin(); });
+  });
+  ['signup-email','signup-password'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') authSignup(); });
+  });
+
+  injectAuthStyles();
+}
+
+function injectAuthStyles() {
+  if (document.getElementById('auth-styles')) return;
+  const s = document.createElement('style');
+  s.id = 'auth-styles';
+  s.textContent = `
+    #auth-modal { position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px; }
+    .auth-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px); }
+    .auth-box {
+      position:relative;z-index:1;
+      background:linear-gradient(160deg,rgba(22,18,10,0.99),rgba(14,12,7,1));
+      border:1px solid rgba(200,134,10,0.15);
+      border-radius:18px;
+      padding:32px 28px 28px;
+      width:100%;max-width:380px;
+      box-shadow:0 32px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(200,134,10,0.05) inset;
+      animation:authIn .3s cubic-bezier(0.2,0,0.2,1);
+    }
+    @keyframes authIn { from{opacity:0;transform:translateY(20px) scale(0.97)} to{opacity:1;transform:none} }
+    .auth-close {
+      position:absolute;top:16px;right:16px;
+      background:none;border:none;color:var(--text3);
+      font-size:14px;cursor:pointer;padding:4px 8px;
+      border-radius:6px;transition:color .2s;
+    }
+    .auth-close:hover { color:var(--cream); }
+    .auth-logo { display:flex;align-items:center;gap:4px;justify-content:center;margin-bottom:20px; }
+    .auth-logo-star { color:var(--amber);font-size:10px; }
+    .auth-tabs { display:flex;gap:4px;background:rgba(255,255,255,0.04);border-radius:10px;padding:4px;margin-bottom:24px; }
+    .auth-tab {
+      flex:1;padding:9px;border:none;background:none;
+      font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+      color:var(--text3);border-radius:7px;cursor:pointer;transition:all .2s;
+    }
+    .auth-tab.active { background:rgba(200,134,10,0.15);color:var(--amber-b); }
+    .auth-title { font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);margin-bottom:4px; }
+    .auth-sub { font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:20px;line-height:1.5; }
+    .auth-field { margin-bottom:14px; }
+    .auth-label { display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:6px; }
+    .auth-input {
+      width:100%;padding:12px 14px;
+      background:rgba(255,255,255,0.04);
+      border:1.5px solid rgba(255,255,255,0.08);
+      border-radius:10px;color:var(--cream);
+      font-family:'DM Mono',monospace;font-size:13px;
+      outline:none;transition:border-color .2s;
+      -webkit-appearance:none;
+    }
+    .auth-input:focus { border-color:rgba(200,134,10,0.5); }
+    .auth-input::placeholder { color:var(--muted); }
+    .auth-error { font-family:'DM Mono',monospace;font-size:11px;color:#e05555;min-height:16px;margin-bottom:10px;line-height:1.4; }
+    .auth-btn {
+      width:100%;padding:14px;margin-top:4px;
+      background:linear-gradient(160deg,rgba(160,100,8,0.9),rgba(100,55,4,0.95));
+      border:1px solid rgba(200,134,10,0.2);
+      border-radius:10px;color:rgba(240,220,180,0.95);
+      font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+      transition:all .2s;
+    }
+    .auth-btn:hover { background:linear-gradient(160deg,rgba(180,115,10,0.95),rgba(120,65,5,0.98));transform:translateY(-1px); }
+    .auth-btn:disabled { opacity:.5;cursor:not-allowed;transform:none; }
+    .auth-switch { font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-align:center;margin-top:16px; }
+    .auth-switch span { color:var(--amber);cursor:pointer;text-decoration:underline; }
+    .auth-success-ico { font-size:32px;text-align:center;margin-bottom:12px;color:var(--amber); }
+  `;
+  document.head.appendChild(s);
+}
+
+function openAuthModal(tab) {
+  createAuthModal();
+  authSwitchTab(tab || 'login');
+  document.getElementById('auth-modal').style.display = 'flex';
+  setTimeout(() => {
+    const input = tab === 'signup'
+      ? document.getElementById('signup-email')
+      : document.getElementById('login-email');
+    if (input) input.focus();
+  }, 100);
+}
+
+function closeAuthModal() {
+  const m = document.getElementById('auth-modal');
+  if (m) m.style.display = 'none';
+  // Limpar campos e erros
+  ['login-email','login-password','signup-email','signup-password'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['login-error','signup-error'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '';
+  });
+}
+
+function authSwitchTab(tab) {
+  document.getElementById('auth-form-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('auth-form-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('auth-success').style.display = 'none';
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+}
+
+async function authLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  const btnTxt = document.getElementById('login-btn-txt');
+
+  errEl.textContent = '';
+  if (!email || !password) { errEl.textContent = 'Preencha email e senha.'; return; }
+
+  btn.disabled = true;
+  btnTxt.textContent = 'Entrando...';
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      errEl.textContent = error.message === 'Invalid login credentials'
+        ? 'Email ou senha incorretos.'
+        : error.message;
+      btn.disabled = false;
+      btnTxt.textContent = 'Entrar';
+      return;
+    }
+    if (data.session) {
+      closeAuthModal();
+      updateAuthUI(true);
+      showToast('✦ Bem-vindo!', 'success');
+    }
+  } catch(e) {
+    errEl.textContent = 'Erro ao conectar. Tente novamente.';
+    btn.disabled = false;
+    btnTxt.textContent = 'Entrar';
+  }
+}
+
+async function authSignup() {
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const errEl = document.getElementById('signup-error');
+  const btn = document.getElementById('signup-btn');
+  const btnTxt = document.getElementById('signup-btn-txt');
+
+  errEl.textContent = '';
+  if (!email) { errEl.textContent = 'Informe seu email.'; return; }
+  if (password.length < 6) { errEl.textContent = 'Senha deve ter ao menos 6 caracteres.'; return; }
+
+  btn.disabled = true;
+  btnTxt.textContent = 'Criando conta...';
+
+  try {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      errEl.textContent = error.message === 'User already registered'
+        ? 'Este email já está cadastrado.'
+        : error.message;
+      btn.disabled = false;
+      btnTxt.textContent = 'Criar conta';
+      return;
+    }
+    // Se já confirmado automaticamente (sem email confirm)
+    if (data.session) {
+      closeAuthModal();
+      updateAuthUI(true);
+      showToast('✦ Conta criada! Bem-vindo!', 'success');
+    } else {
+      // Precisa confirmar email
+      document.getElementById('auth-form-signup').style.display = 'none';
+      document.getElementById('auth-success').style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Erro ao criar conta. Tente novamente.';
+    btn.disabled = false;
+    btnTxt.textContent = 'Criar conta';
+  }
+}
+
+function updateAuthUI(loggedIn) {
+  const authBtns = document.getElementById('auth-buttons');
+  const memberBtns = document.getElementById('member-buttons');
+  if (loggedIn) {
+    authBtns.style.display = 'none';
+    memberBtns.style.display = 'flex';
+  } else {
+    authBtns.style.display = 'flex';
+    memberBtns.style.display = 'none';
+  }
+}
+
+// Expor funções globais do modal
+window.authSwitchTab = authSwitchTab;
+window.authLogin = authLogin;
+window.authSignup = authSignup;
+window.openAuthModal = openAuthModal;
+
+// ── INIT AUTH ─────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
 
-  const { data: { session } } = await supabase.auth.getSession()
+  // Checar sessão existente
+  const { data: { session } } = await supabase.auth.getSession();
+  updateAuthUI(!!session);
 
-  console.log('SESSION:', session)
+  // Escutar mudanças de auth
+  supabase.auth.onAuthStateChange((_event, session) => {
+    updateAuthUI(!!session);
+  });
 
-  if (session) {
+  // Botão CRIAR CONTA
+  document.getElementById('test-signup').addEventListener('click', () => {
+    openAuthModal('signup');
+  });
 
-    document.getElementById('auth-buttons').style.display = 'none'
+  // Botão ENTRAR
+  document.getElementById('test-login').addEventListener('click', () => {
+    openAuthModal('login');
+  });
 
-    document.getElementById('member-buttons').style.display = 'flex'
-
-  }
+  // Botão LOGOUT
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    updateAuthUI(false);
+    showToast('Sessão encerrada', 'amber');
+  });
 
 })
-
-
-// SIGNUP
-document
-  .getElementById('test-signup')
-  .addEventListener('click', async () => {
-
-    try {
-
-      const email = `teste${Date.now()}@gmail.com`
-
-      const password = '123456789'
-
-      const { data, error } = await supabase.auth.signUp({
-
-        email,
-        password
-
-      })
-
-      console.log('SIGNUP:', data)
-
-      console.log('ERROR:', error)
-
-    } catch (err) {
-
-      console.error(err)
-
-    }
-
-  })
-
-
-// LOGIN
-document
-  .getElementById('test-login')
-  .addEventListener('click', async () => {
-
-    try {
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-
-        email: 'teste@gmail.com',
-
-        password: '123456789'
-
-      })
-
-      console.log('LOGIN:', data)
-
-      console.log('ERROR:', error)
-
-      if (data.session) {
-
-        document.getElementById('auth-buttons').style.display = 'none'
-
-        document.getElementById('member-buttons').style.display = 'flex'
-
-      }
-
-    } catch (err) {
-
-      console.error(err)
-
-    }
-
-  })
-
-
-// LOGOUT
-document
-  .getElementById('logout-btn')
-  .addEventListener('click', async () => {
-
-    await supabase.auth.signOut()
-
-    location.reload()
-
-  })
