@@ -229,6 +229,23 @@ function rotatePlaceholder() {
 async function startWizard(){
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) { openAuthModal('login'); return; }
+
+  // Verificar assinatura ativa
+  const { data: assinatura } = await supabase
+    .from('assinaturas')
+    .select('ativo, plano')
+    .eq('email', session.user.email)
+    .single();
+
+  if (!assinatura || !assinatura.ativo) {
+    showToast('⚠️ Acesso PRO necessário', 'amber');
+    // Redireciona para página de compra
+    setTimeout(() => {
+      window.open('https://pay.kiwify.com.br/foodart-pro', '_blank');
+    }, 1000);
+    return;
+  }
+
   document.getElementById('screen-welcome').style.display='none';
   document.getElementById('screen-wizard').style.display='block';
   document.getElementById('nav-bar').style.display='flex';
