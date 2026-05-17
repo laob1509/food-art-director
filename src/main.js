@@ -1,4 +1,4 @@
-
+import { supabase } from './supabase'
 var INTENTS={
   crave:{name:'DESEJO',icon:'🔥',pt:{open:'INSTINTO. A câmera invade o alimento. Impulso imediato.',light:'Luz dura e direcional. Highlights especulares agressivos.',color:'Âmbar queimado, vermelho profundo, dourado intenso.',mood:'URGENTE. VISCERAL. Sensação: Preciso comer isso AGORA.'},en:{open:'INSTINCT. Camera invades the food. Immediate impulse.',light:'Hard directional light. Aggressive specular highlights.',color:'Burnt amber, deep red, intense gold.',mood:'URGENT. VISCERAL. Feeling: I need to eat this NOW.'}},
   comfort:{name:'CONFORTO',icon:'🤗',pt:{open:'SEGURANÇA EMOCIONAL. A câmera acolhe. Evoca lar e memória afetiva.',light:'Luz natural difusa. Temperatura 4000K–4800K.',color:'Creme, caramelo, marrom dourado.',mood:'Quente, aconchegante, autêntico.'},en:{open:'EMOTIONAL SAFETY. Camera welcomes. Evokes home and affective memory.',light:'Soft diffused natural light. Temperature 4000K–4800K.',color:'Cream, caramel, golden brown.',mood:'Warm, cozy, authentic.'}},
@@ -725,18 +725,97 @@ window.setLang = setLang;
 window.setModel = setModel;
 window.toggleCat = toggleCat;
 window.selectFoodFromSearch = selectFoodFromSearch;
-window.addEventListener("DOMContentLoaded", async () => {
+window.addEventListener('DOMContentLoaded', async () => {
 
-  const btn = document.querySelector(".btn-start");
+  const { data: { session } } = await supabase.auth.getSession()
 
-  if (!btn) return;
+  console.log('SESSION:', session)
 
-  btn.addEventListener("click", async () => {
+  if (session) {
 
-    if (window.$memberstackDom) {
-      await window.$memberstackDom.openModal('LOGIN');
+    document.getElementById('auth-buttons').style.display = 'none'
+
+    document.getElementById('member-buttons').style.display = 'flex'
+
+  }
+
+})
+
+
+// SIGNUP
+document
+  .getElementById('test-signup')
+  .addEventListener('click', async () => {
+
+    try {
+
+      const email = `teste${Date.now()}@gmail.com`
+
+      const password = '123456789'
+
+      const { data, error } = await supabase.auth.signUp({
+
+        email,
+        password
+
+      })
+
+      console.log('SIGNUP:', data)
+
+      console.log('ERROR:', error)
+
+    } catch (err) {
+
+      console.error(err)
+
     }
 
-  });
+  })
 
-});
+
+// LOGIN
+document
+  .getElementById('test-login')
+  .addEventListener('click', async () => {
+
+    try {
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+
+        email: 'teste@gmail.com',
+
+        password: '123456789'
+
+      })
+
+      console.log('LOGIN:', data)
+
+      console.log('ERROR:', error)
+
+      if (data.session) {
+
+        document.getElementById('auth-buttons').style.display = 'none'
+
+        document.getElementById('member-buttons').style.display = 'flex'
+
+      }
+
+    } catch (err) {
+
+      console.error(err)
+
+    }
+
+  })
+
+
+// LOGOUT
+document
+  .getElementById('logout-btn')
+  .addEventListener('click', async () => {
+
+    await supabase.auth.signOut()
+
+    location.reload()
+
+  })

@@ -19,9 +19,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 
-<script data-memberstack-app="app_cmp7nc77zO0r3Osye50cncfbk" src="https://static.memberstack.com/scripts/v1/memberstack.js"></script>
-  <!-- Styles -->
-  <link rel="stylesheet" href="/src/styles/main.css">
+<!-- Memberstack webflow package -->
+
+<link rel="stylesheet" href="/src/styles/main.css">
+
 </head>
 <body>
 
@@ -71,11 +72,41 @@
     </div>
 
     <!-- CTA -->
-    <button class="btn-start" data-ms-modal="LOGIN">
-  <span class="btn-start-star">✦</span>
-      TESTE MEMBERSTACK →
-    </button>
+    <div id="auth-buttons" style="display:flex;gap:12px;width:100%;">
+  <button
+  id="test-signup"
+  class="btn-start"
+  style="flex:1">
 
+    <span class="btn-start-star">✦</span>
+    CRIAR CONTA
+  </button>
+
+  <button
+  id="test-login"
+  class="btn-start"
+  style="flex:1">
+
+    ENTRAR
+  </button>
+</div>
+<div id="member-buttons" style="display:none;gap:12px;width:100%;">
+
+  <button class="btn-start"
+    style="flex:1"
+    onclick="startWizard()">
+
+    ✦ COMEÇAR
+  </button>
+
+  <button class="btn-start"
+    style="flex:1"
+    id="logout-btn">
+
+    SAIR
+  </button>
+
+</div>
     <!-- Footer icons -->
     <div class="welcome-features">
       <div class="wf-item">
