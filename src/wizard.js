@@ -572,21 +572,19 @@ var PANINI_PAISES = {
   GEN:{nome:'Genérica',    cores:'dourado e branco e azul FIFA',                    bandeira:'🌐'}
 };
 
-// ── Feature flag: busca do Supabase na inicialização ──────────────
+// ── Feature flag: fetch direto ao Supabase ────────────────────────
 async function initPaniniFlag() {
   try {
-    const { data, error } = await supabase
-      .from('features')
-      .select('value')
-      .eq('key', 'panini_enabled')
-      .single();
-    if (!error && data && data.value === 'true') {
+    var res = await fetch(
+      'https://yclvvfapkdwltayuiivy.supabase.co/rest/v1/features?key=eq.panini_enabled',
+      { headers: { 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbHZ2ZmFwa2R3bHRheXVpaXZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NzExMDMsImV4cCI6MjA5NDU0NzEwM30.O4fuDlL_KGPPO9WHaazrOtbkfO5KVpbVwpND5sVH0IA' } }
+    );
+    var data = await res.json();
+    if (data && data[0] && data[0].value === 'true') {
       var card = document.getElementById('panini-entry-card');
       if (card) card.style.display = 'block';
     }
-  } catch(e) {
-    // silently fail — feature fica desativada se Supabase não responder
-  }
+  } catch(e) {}
 }
 
 // ── Abrir / fechar tela Panini ────────────────────────────────────
