@@ -241,7 +241,7 @@ async function startWizard(){
     showToast('⚠️ Acesso PRO necessário', 'amber');
     // Redireciona para página de compra
     setTimeout(() => {
-    window.open('https://pay.kiwify.com.br/JtjKsh0', '_blank');
+    window.open('https://pay.kiwify.com.br/RPjrbot', '_blank');
     }, 1000);
     return;
   }
