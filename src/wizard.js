@@ -1,4 +1,5 @@
 // ── FOOD ART DIRECTOR AI — WIZARD LOGIC ──────────────────────────
+import { supabase } from './supabase'
 
 
 var S={intent:null,food:null,style:null,angle:'eyelevel',intensity:'balanced',format:null,context:'normal',seasonal:null,photo:null,env:null,lang:'pt',model:'gpt'};
