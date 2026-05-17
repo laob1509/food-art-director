@@ -532,3 +532,207 @@ window.setLang = setLang;
 window.setModel = setModel;
 window.toggleCat = toggleCat;
 window.selectFoodFromSearch = selectFoodFromSearch;
+
+// ══════════════════════════════════════════════════════════════════
+// PANINI FLOW — lógica dedicada
+// Feature flag: tabela `features` no Supabase, key='panini_enabled'
+// Para desativar: UPDATE features SET value='false' WHERE key='panini_enabled'
+// ══════════════════════════════════════════════════════════════════
+
+var PAN = { food: null, foodLabel: '', tipo: null, pais: null };
+
+var PANINI_TIPOS = {
+  dorada: { nome:'Dorada', pt:'TIPO: FIGURINHA DORADA\nFundo inteiramente dourado metalizado com textura cristalizada facetada — foil dourado cobre toda a superfície. Reflexos variando entre ouro claro, ouro escuro e champagne. Acabamento de máximo prestígio.', en:'TYPE: GOLD STICKER\nFully metallic gold background with faceted crystalline texture — gold foil covers the entire surface. Shifting reflections: light gold, dark gold, champagne. Maximum prestige finish.' },
+  base:   { nome:'Base',   pt:'TIPO: FIGURINHA BASE\nFundo com degradê nas cores da seleção — transição da cor primária para tons mais escuros. O numeral "26" em branco semitransparente por trás do sujeito. Acabamento glossy standard.', en:'TYPE: BASE STICKER\nBackground gradient in team colors — transition from primary color to darker tones. Numeral "26" in semi-transparent white behind the subject. Standard glossy finish.' },
+  extra:  { nome:'Extra Sticker', pt:'TIPO: EXTRA STICKER\nFundo amarelo-dourado vibrante com elementos geométricos coloridos. Badge "EXTRA STICKER" em vermelho-laranja no canto superior direito. Sujeito em corpo inteiro saindo do card. Alta energia e exclusividade.', en:'TYPE: EXTRA STICKER\nVibrant yellow-gold background with colorful geometric elements. Red-orange "EXTRA STICKER" badge at top right. Subject in full body shot breaking out of the card. High energy.' },
+  holo:   { nome:'Holográfica', pt:'TIPO: FIGURINHA HOLOGRÁFICA\nSuperfície inteiramente prateada iridescente — foil muda de cor conforme o ângulo de visão. Pattern geométrico repetitivo visível por baixo. Brilho espectral máximo.', en:'TYPE: HOLOGRAPHIC STICKER\nFully iridescent silver surface — foil shifts color with viewing angle. Subtle repeating geometric pattern underneath. Maximum spectral shine.' }
+};
+
+var PANINI_PAISES = {
+  BRA:{nome:'Brasil',      cores:'verde #009c3b e amarelo #FFDF00 e azul #002776', bandeira:'🇧🇷'},
+  ARG:{nome:'Argentina',   cores:'azul celeste #74ACDF e branco',                  bandeira:'🇦🇷'},
+  FRA:{nome:'França',      cores:'azul #002395 e vermelho #ED2939 e branco',        bandeira:'🇫🇷'},
+  ENG:{nome:'Inglaterra',  cores:'branco e vermelho #CF081F',                       bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},
+  ESP:{nome:'Espanha',     cores:'vermelho #c60b1e e amarelo #ffc400',              bandeira:'🇪🇸'},
+  GER:{nome:'Alemanha',    cores:'preto e vermelho #DD0000 e dourado #FFCE00',      bandeira:'🇩🇪'},
+  POR:{nome:'Portugal',    cores:'verde #006600 e vermelho #FF0000',                bandeira:'🇵🇹'},
+  ITA:{nome:'Itália',      cores:'azul #003399 (Azzurri)',                          bandeira:'🇮🇹'},
+  USA:{nome:'USA',         cores:'azul #002868 e vermelho #BF0A30 e branco',        bandeira:'🇺🇸'},
+  MEX:{nome:'México',      cores:'verde #006847 e branco e vermelho #CE1126',       bandeira:'🇲🇽'},
+  CAN:{nome:'Canadá',      cores:'vermelho #FF0000 e branco',                       bandeira:'🇨🇦'},
+  URU:{nome:'Uruguai',     cores:'azul celeste #5EB6E4 e branco',                   bandeira:'🇺🇾'},
+  COL:{nome:'Colômbia',    cores:'amarelo #FCD116 e azul #003087 e vermelho #CE1126',bandeira:'🇨🇴'},
+  NED:{nome:'Holanda',     cores:'laranja #FF6600 e azul #003DA5',                  bandeira:'🇳🇱'},
+  CRO:{nome:'Croácia',     cores:'vermelho #FF0000 e branco quadriculado',          bandeira:'🇭🇷'},
+  MAR:{nome:'Marrocos',    cores:'vermelho #C1272D e verde #006233',                bandeira:'🇲🇦'},
+  JPN:{nome:'Japão',       cores:'azul #003DA5 e vermelho',                         bandeira:'🇯🇵'},
+  SEN:{nome:'Senegal',     cores:'verde #00853F e amarelo #FDEF42 e vermelho #E31B23',bandeira:'🇸🇳'},
+  NOR:{nome:'Noruega',     cores:'vermelho #EF2B2D e azul #002868 e branco',        bandeira:'🇳🇴'},
+  GEN:{nome:'Genérica',    cores:'dourado e branco e azul FIFA',                    bandeira:'🌐'}
+};
+
+// ── Feature flag: busca do Supabase na inicialização ──────────────
+async function initPaniniFlag() {
+  try {
+    const { data, error } = await supabase
+      .from('features')
+      .select('value')
+      .eq('key', 'panini_enabled')
+      .single();
+    if (!error && data && data.value === 'true') {
+      var card = document.getElementById('panini-entry-card');
+      if (card) card.style.display = 'block';
+    }
+  } catch(e) {
+    // silently fail — feature fica desativada se Supabase não responder
+  }
+}
+
+// ── Abrir / fechar tela Panini ────────────────────────────────────
+function openPaniniFlow() {
+  document.getElementById('screen-panini').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  panGoTo(1);
+  panBuildFoodCats();
+}
+
+function closePaniniFlow() {
+  document.getElementById('screen-panini').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// ── Navegação interna ─────────────────────────────────────────────
+function panGoTo(n) {
+  if (n === 2 && !PAN.food) { showToast('Selecione um alimento','amber'); return; }
+  if (n === 3) {
+    if (!PAN.tipo) { showToast('Escolha o tipo de figurinha','amber'); return; }
+    if (!PAN.pais) { showToast('Escolha a seleção','amber'); return; }
+    panBuildPrompt();
+  }
+  [1,2,3].forEach(function(i) {
+    var el = document.getElementById('pan-step-' + i);
+    if (el) el.style.display = i === n ? 'block' : 'none';
+  });
+  var lbl = document.getElementById('pan-step-lbl');
+  if (lbl) lbl.textContent = n + ' / 3';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Busca de alimento (reutiliza FD do main.js) ───────────────────
+function panFilterFoods(q) {
+  var res = document.getElementById('pan-food-results');
+  if (!q || q.length < 2) { res.style.display='none'; return; }
+  var l = S.lang === 'pt' ? 'pt' : 'en';
+  var matches = Object.entries(FD).filter(function(e) {
+    return e[1][l] && e[1][l].toLowerCase().includes(q.toLowerCase());
+  }).slice(0,8);
+  res.innerHTML = matches.map(function(e) {
+    return '<div class="food-search-item" onclick="panSelectFood(\''+e[0]+'\')">'+e[1][l]+'</div>';
+  }).join('') || '<div class="food-search-empty">Nenhum resultado</div>';
+  res.style.display = 'block';
+}
+
+function panSelectFood(key) {
+  PAN.food = key;
+  PAN.foodLabel = FD[key] ? (FD[key][S.lang==='pt'?'pt':'en'] || key) : key;
+  document.getElementById('pan-food-search').value = '';
+  document.getElementById('pan-food-results').style.display = 'none';
+  var sel = document.getElementById('pan-food-selected');
+  sel.textContent = '✓ ' + PAN.foodLabel;
+  sel.style.display = 'block';
+}
+
+// ── Categorias de alimento simplificadas ─────────────────────────
+function panBuildFoodCats() {
+  var container = document.getElementById('pan-food-cats');
+  if (!container || !window.FOOD_CATS) return;
+  container.innerHTML = '';
+  FOOD_CATS.forEach(function(cat) {
+    var div = document.createElement('div');
+    div.style.cssText = 'margin-bottom:10px;';
+    div.innerHTML = '<button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'" style="width:100%;text-align:left;padding:10px 14px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r-sm);font-family:\'Syne\',sans-serif;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;">'+cat.label+'</button><div style="display:none;padding:10px;display:none;"><div class="opts-grid">' +
+      cat.items.map(function(k) {
+        if (!FD[k]) return '';
+        var lbl = FD[k][S.lang==='pt'?'pt':'en'] || k;
+        return '<button class="opt-card" onclick="panSelectFood(\''+k+'\')" style="font-size:11px;">'+lbl+'</button>';
+      }).join('') + '</div></div>';
+    container.appendChild(div);
+  });
+}
+
+// ── pan-card listeners ────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  var el = e.target.closest('[data-pan]');
+  if (!el) return;
+  var g = el.dataset.pan, v = el.dataset.v;
+  document.querySelectorAll('[data-pan="'+g+'"]').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  PAN[g] = v;
+});
+
+// ── Gerar prompt ──────────────────────────────────────────────────
+function panBuildPrompt() {
+  if (!PAN.food || !PAN.tipo || !PAN.pais) return;
+  var food = FD[PAN.food];
+  var tipo = PANINI_TIPOS[PAN.tipo];
+  var pais = PANINI_PAISES[PAN.pais];
+  var l = S.lang === 'pt' ? 'pt' : 'en';
+  var nota = (document.getElementById('pan-nota') || {}).value || '';
+
+  var prompt = '';
+  if (l === 'pt') {
+    prompt = 'SUJEITO PRINCIPAL\nUse o ' + food.pt + ' como sujeito central.\n\n';
+    prompt += tipo.pt + '\n\n';
+    prompt += 'SELEÇÃO / PAÍS\nFiguirinha da seleção de ' + pais.nome + '. ';
+    prompt += 'Cores dominantes: ' + pais.cores + '. Bandeira ' + pais.bandeira + ' integrada no design.\n\n';
+    prompt += 'CARD FIFA WORLD CUP 2026™\nProporção 2:3 vertical. Bordas arredondadas 6px. O numeral "26" gigante semitransparente em branco por trás do sujeito — tipografia bold arredondada oficial. Logo FIFA World Cup 2026 no canto superior direito em branco. Rodapé com nome do prato em caps bold e informações em fonte monospace. Logo Panini no canto inferior direito. Sombra suave abaixo do card. Ultra detalhado, hiper-realista, 4K.';
+  } else {
+    prompt = 'MAIN SUBJECT\nUse the ' + food.en + ' as central subject.\n\n';
+    prompt += tipo.en + '\n\n';
+    prompt += 'NATIONAL TEAM\n' + pais.nome + ' team sticker. ';
+    prompt += 'Dominant colors: ' + pais.cores + '. Flag ' + pais.bandeira + ' integrated in the design.\n\n';
+    prompt += 'FIFA WORLD CUP 2026™ CARD\n2:3 vertical ratio. Rounded corners 6px. Giant "26" numeral semi-transparent in white behind the subject — official bold rounded typography. FIFA World Cup 2026 logo at top right in white. Footer with dish name in bold caps and info in monospace font. Panini logo at bottom right. Soft shadow below the card. Ultra detailed, hyper-realistic, 4K.';
+  }
+
+  if (nota.trim()) prompt += '\n\n— OBSERVAÇÃO —\n' + nota.trim();
+
+  // Exibir
+  var box = document.getElementById('pan-prompt-box');
+  if (box) box.textContent = prompt;
+
+  // Tags
+  var tags = document.getElementById('pan-tags');
+  if (tags) {
+    tags.innerHTML = [
+      '✦ Panini 2026',
+      tipo.nome,
+      pais.bandeira + ' ' + pais.nome,
+      PAN.foodLabel
+    ].map(function(t){ return '<span class="sum-tag">'+t+'</span>'; }).join('');
+  }
+
+  return prompt;
+}
+
+function panCopy() {
+  var prompt = panBuildPrompt();
+  if (!prompt) return;
+  navigator.clipboard.writeText(prompt).then(function(){ showToast('Prompt copiado!','green'); }).catch(function(){ showToast('Erro ao copiar','red'); });
+}
+
+function panReset() {
+  PAN = { food: null, foodLabel: '', tipo: null, pais: null };
+  document.querySelectorAll('[data-pan]').forEach(function(b){ b.classList.remove('active'); });
+  var sel = document.getElementById('pan-food-selected');
+  if (sel) { sel.style.display='none'; sel.textContent=''; }
+  var search = document.getElementById('pan-food-search');
+  if (search) search.value = '';
+  var nota = document.getElementById('pan-nota');
+  if (nota) nota.value = '';
+  panGoTo(1);
+}
+
+// Inicializar flag ao carregar
+document.addEventListener('DOMContentLoaded', function(){ initPaniniFlag(); });
+// fallback se DOMContentLoaded já disparou
+if (document.readyState !== 'loading') initPaniniFlag();

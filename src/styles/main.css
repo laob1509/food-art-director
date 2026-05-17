@@ -730,3 +730,21 @@ body::after{
     font-size: 6.5px !important;
   }
 }
+
+/* ── PANINI FLOW ───────────────────────────────────────────────── */
+.pan-step-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.pan-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.pan-card{padding:10px;border-radius:var(--r-sm);cursor:pointer;border:1px solid rgba(218,165,32,0.15);background:rgba(218,165,32,0.04);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--text2);transition:all var(--tr);text-align:center;display:flex;flex-direction:column;gap:3px;align-items:center;}
+.pan-card:hover{border-color:rgba(218,165,32,0.5);color:var(--text);background:rgba(218,165,32,0.08);}
+.pan-card.active{border-color:rgba(218,165,32,0.85);color:rgba(218,165,32,0.95);background:rgba(218,165,32,0.1);}
+.pan-card-emoji{font-size:18px;line-height:1;}
+.pan-card-sub{font-family:'DM Mono',monospace;font-size:8px;color:var(--text3);font-weight:400;}
+.pan-country-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;}
+.pan-flag-card{padding:8px 4px;border-radius:var(--r-sm);cursor:pointer;border:1px solid rgba(218,165,32,0.1);background:rgba(218,165,32,0.02);font-family:'DM Mono',monospace;font-size:8px;color:var(--text3);transition:all var(--tr);text-align:center;display:flex;flex-direction:column;gap:3px;align-items:center;}
+.pan-flag-card:hover{border-color:rgba(218,165,32,0.4);color:var(--text2);}
+.pan-flag-card.active{border-color:rgba(218,165,32,0.85);color:rgba(218,165,32,0.9);background:rgba(218,165,32,0.08);}
+.pan-flag-card span:first-child{font-size:20px;}
+.pan-btn-next{flex:1;padding:13px;background:rgba(218,165,32,0.12);border:1.5px solid rgba(218,165,32,0.5);border-radius:var(--r);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(218,165,32,0.9);cursor:pointer;transition:all var(--tr);}
+.pan-btn-next:hover{background:rgba(218,165,32,0.2);border-color:rgba(218,165,32,0.9);}
+.pan-btn-back{padding:13px 16px;background:transparent;border:1px solid var(--border2);border-radius:var(--r);font-family:'Syne',sans-serif;font-size:12px;color:var(--text3);cursor:pointer;transition:all var(--tr);}
+.pan-btn-back:hover{color:var(--text2);border-color:var(--border3);}
