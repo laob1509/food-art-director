@@ -948,7 +948,9 @@ function panReset() {
   if (search) search.value = '';
   var nota = document.getElementById('pan-nota');
   if (nota) nota.value = '';
-  panGoTo(1);
+  // Fechar Panini e voltar ao início geral
+  closePaniniFlow();
+  restart();
 }
 
 // Inicializar flag ao carregar
