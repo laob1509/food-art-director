@@ -682,3 +682,51 @@ body::after{
   cursor:pointer;transition:all var(--tr);
 }
 .btn-variation:hover{border-color:var(--amber);color:var(--amber-l);}
+
+/* ── MOBILE FIXES ─────────────────────────────────────────────────────────── */
+@media (max-width: 400px) {
+  /* Botões CRIAR CONTA e ENTRAR empilhados em telas pequenas */
+  #auth-buttons, #member-buttons {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  /* Features row — texto não corta */
+  .wf-item span {
+    font-size: 7px !important;
+    letter-spacing: .03em !important;
+  }
+
+  /* Stats cards — garante que aparecem todos */
+  .welcome-combos {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* Botão start menor em mobile */
+  .btn-start {
+    font-size: 11px !important;
+    padding: 14px 16px !important;
+    letter-spacing: .08em !important;
+  }
+
+  /* Título menor */
+  .welcome-title {
+    font-size: clamp(24px, 8vw, 36px) !important;
+  }
+
+  /* Sub menor */
+  .welcome-sub {
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  #auth-buttons, #member-buttons {
+    flex-direction: column !important;
+  }
+  .wf-item span {
+    font-size: 6.5px !important;
+  }
+}
