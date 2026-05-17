@@ -161,6 +161,17 @@
     <div id="intent-desc-box" style="display:none;margin-top:14px;padding:12px 14px;background:var(--s2);border:1.5px solid var(--border2);border-radius:var(--r);transition:all 0.25s;">
       <div id="intent-desc-txt" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);line-height:1.6;"></div>
     </div>
+    <!-- PANINI CARD — controlado por feature flag Supabase -->
+    <div id="panini-entry-card" style="display:none;margin-top:12px;">
+      <button onclick="openPaniniFlow()" style="width:100%;padding:14px 16px;border-radius:var(--r);border:1.5px solid rgba(218,165,32,0.4);background:linear-gradient(135deg,rgba(28,22,6,0.98),rgba(18,14,4,0.99));cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(218,165,32,0.8)'" onmouseout="this.style.borderColor='rgba(218,165,32,0.4)'">
+        <div style="font-size:22px;flex-shrink:0;">🏆</div>
+        <div style="text-align:left;flex:1;">
+          <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;color:rgba(218,165,32,0.95);">✦ FIGURINHA PANINI</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(218,165,32,0.45);margin-top:2px;">FIFA World Cup 2026™ · fluxo dedicado</div>
+        </div>
+        <div style="font-size:16px;color:rgba(218,165,32,0.4);">→</div>
+      </button>
+    </div>
   </div>
   <!-- STEP 2 -->
   <div class="step" id="step-2">
@@ -739,6 +750,79 @@
   <div class="nav-inner" id="nav-inner">
     <button class="btn-back" id="btn-back" onclick="goBack()">← Voltar</button>
     <button class="btn-next" id="btn-next" onclick="goNext()">Próximo →</button>
+  </div>
+</div>
+
+
+<!-- PANINI FLOW — tela dedicada -->
+<div id="screen-panini" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;">
+  <div style="padding:16px 20px;border-bottom:1px solid rgba(218,165,32,0.15);display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--bg);z-index:10;">
+    <button onclick="closePaniniFlow()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;">←</button>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;color:rgba(218,165,32,0.9);">✦ FIGURINHA PANINI</div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;">FIFA WORLD CUP 2026™</div>
+    </div>
+    <div style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);" id="pan-step-lbl">1 / 3</div>
+  </div>
+  <div id="pan-step-1" style="padding:20px;">
+    <div class="pan-step-title">O que você está fotografando?</div>
+    <p class="step-hint">Busque ou selecione o alimento</p>
+    <div class="food-search-wrap" style="margin-bottom:16px;">
+      <input class="food-search" id="pan-food-search" type="text" placeholder="🔍  Digite um alimento..." oninput="panFilterFoods(this.value)" autocomplete="off">
+      <div class="food-search-results" id="pan-food-results" style="display:none"></div>
+    </div>
+    <div id="pan-food-selected" style="display:none;margin-bottom:12px;padding:10px 14px;background:rgba(218,165,32,0.08);border:1px solid rgba(218,165,32,0.3);border-radius:var(--r);font-family:'DM Mono',monospace;font-size:12px;color:rgba(218,165,32,0.9);"></div>
+    <div id="pan-food-cats"></div>
+    <div style="margin-top:20px;"><button class="pan-btn-next" id="pan-btn-1" onclick="panGoTo(2)">Próximo →</button></div>
+  </div>
+  <div id="pan-step-2" style="padding:20px;display:none;">
+    <div class="pan-step-title">Tipo de figurinha</div>
+    <div class="pan-grid" style="margin-bottom:20px;">
+      <div class="pan-card" data-pan="tipo" data-v="dorada"><span class="pan-card-emoji">🥇</span><span>Dorada</span><span class="pan-card-sub">fundo dourado metalizado</span></div>
+      <div class="pan-card" data-pan="tipo" data-v="base"><span class="pan-card-emoji">🃏</span><span>Base</span><span class="pan-card-sub">cores da seleção</span></div>
+      <div class="pan-card" data-pan="tipo" data-v="extra"><span class="pan-card-emoji">⭐</span><span>Extra Sticker</span><span class="pan-card-sub">badge especial</span></div>
+      <div class="pan-card" data-pan="tipo" data-v="holo"><span class="pan-card-emoji">✨</span><span>Holográfica</span><span class="pan-card-sub">foil iridescente</span></div>
+    </div>
+    <div class="pan-step-title">Seleção / País</div>
+    <div class="pan-country-grid">
+      <div class="pan-flag-card" data-pan="pais" data-v="BRA"><span>🇧🇷</span><span>Brasil</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="ARG"><span>🇦🇷</span><span>Argentina</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="FRA"><span>🇫🇷</span><span>França</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="ENG"><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span>Inglaterra</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="ESP"><span>🇪🇸</span><span>Espanha</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="GER"><span>🇩🇪</span><span>Alemanha</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="POR"><span>🇵🇹</span><span>Portugal</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="ITA"><span>🇮🇹</span><span>Itália</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="USA"><span>🇺🇸</span><span>USA</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="MEX"><span>🇲🇽</span><span>México</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="CAN"><span>🇨🇦</span><span>Canadá</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="URU"><span>🇺🇾</span><span>Uruguai</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="COL"><span>🇨🇴</span><span>Colômbia</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="NED"><span>🇳🇱</span><span>Holanda</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="CRO"><span>🇭🇷</span><span>Croácia</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="MAR"><span>🇲🇦</span><span>Marrocos</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="JPN"><span>🇯🇵</span><span>Japão</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="SEN"><span>🇸🇳</span><span>Senegal</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="NOR"><span>🇳🇴</span><span>Noruega</span></div>
+      <div class="pan-flag-card" data-pan="pais" data-v="GEN"><span>🌐</span><span>Genérica</span></div>
+    </div>
+    <div style="margin-top:20px;display:flex;gap:10px;">
+      <button class="pan-btn-back" onclick="panGoTo(1)">← Voltar</button>
+      <button class="pan-btn-next" id="pan-btn-2" onclick="panGoTo(3)">Gerar Prompt →</button>
+    </div>
+  </div>
+  <div id="pan-step-3" style="padding:20px;display:none;">
+    <div class="pan-step-title">Prompt gerado</div>
+    <div id="pan-tags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;"></div>
+    <div style="margin-bottom:14px;">
+      <textarea id="pan-nota" rows="2" placeholder="Observação adicional (opcional)..." oninput="panBuildPrompt()" style="width:100%;box-sizing:border-box;padding:10px 12px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);font-family:'DM Mono',monospace;font-size:11px;color:var(--text);resize:none;"></textarea>
+    </div>
+    <div id="pan-prompt-box" style="background:var(--s2);border:1px solid rgba(218,165,32,0.2);border-radius:var(--r);padding:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);line-height:1.7;white-space:pre-wrap;word-break:break-word;margin-bottom:16px;min-height:120px;"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="pan-btn-back" onclick="panGoTo(2)">← Voltar</button>
+      <button class="pan-btn-next" onclick="panCopy()" style="flex:1;">⬡ Copiar Prompt</button>
+      <button class="pan-btn-back" onclick="panReset()">↺ Novo</button>
+    </div>
   </div>
 </div>
 
