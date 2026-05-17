@@ -735,3 +735,13 @@ function panReset() {
 document.addEventListener('DOMContentLoaded', function(){ initPaniniFlag(); });
 // fallback se DOMContentLoaded já disparou
 if (document.readyState !== 'loading') initPaniniFlag();
+
+// ── Expor funções Panini globalmente (necessário com Vite modules) ──
+window.openPaniniFlow = openPaniniFlow;
+window.closePaniniFlow = closePaniniFlow;
+window.panGoTo = panGoTo;
+window.panFilterFoods = panFilterFoods;
+window.panSelectFood = panSelectFood;
+window.panBuildPrompt = panBuildPrompt;
+window.panCopy = panCopy;
+window.panReset = panReset;
