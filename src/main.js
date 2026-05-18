@@ -960,6 +960,7 @@ if (document.readyState !== 'loading') initPaniniFlag();
 
 // ── Expor funções Panini globalmente (necessário com Vite modules) ──
 
+window.filterFoods = filterFoods;
 window.selectFoodFromSearch = selectFoodFromSearch;
 window.openPaniniFlow = openPaniniFlow;
 window.closePaniniFlow = closePaniniFlow;
