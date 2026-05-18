@@ -1413,6 +1413,17 @@ window.closeResetModal = closeResetModal;
 // ── INIT AUTH ─────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
 
+  // Detectar recovery pelo hash da URL (type=recovery)
+  if (window.location.hash && window.location.hash.includes('type=recovery')) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      updateAuthUI(true);
+      openResetPasswordModal();
+      // Limpar o hash da URL sem reload
+      history.replaceState(null, '', window.location.pathname);
+    }
+  }
+
   // Checar sessão existente
   const { data: { session } } = await supabase.auth.getSession();
   updateAuthUI(!!session);
