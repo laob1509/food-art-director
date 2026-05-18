@@ -1320,6 +1320,7 @@ window.openAuthModal = openAuthModal;
 
 // ── RESET PASSWORD MODAL ──────────────────────────────────────────────────────
 function openResetPasswordModal() {
+  injectAuthStyles();
   // Criar modal se não existir
   if (!document.getElementById('reset-modal')) {
     const m = document.createElement('div');
