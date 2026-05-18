@@ -1013,6 +1013,30 @@ function createAuthModal() {
           <span id="login-btn-txt">Entrar</span>
         </button>
         <div class="auth-switch">Não tem conta? <span onclick="authSwitchTab('signup')">Criar conta</span></div>
+        <div class="auth-switch" style="margin-top:8px;">Esqueceu a senha? <span onclick="authSwitchTab('forgot')">Recuperar acesso</span></div>
+      </div>
+
+      <!-- FORM FORGOT -->
+      <div id="auth-form-forgot" style="display:none">
+        <div class="auth-title">Recuperar senha</div>
+        <div class="auth-sub">Informe seu email e enviaremos um link para redefinir sua senha.</div>
+        <div class="auth-field">
+          <label class="auth-label">Email</label>
+          <input class="auth-input" id="forgot-email" type="email" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <div class="auth-error" id="forgot-error"></div>
+        <button class="auth-btn" id="forgot-btn" onclick="authForgot()">
+          <span id="forgot-btn-txt">Enviar link</span>
+        </button>
+        <div class="auth-switch">Lembrou a senha? <span onclick="authSwitchTab('login')">Voltar ao login</span></div>
+      </div>
+
+      <!-- FORGOT SUCCESS -->
+      <div id="auth-forgot-success" style="display:none">
+        <div class="auth-success-ico">✉️</div>
+        <div class="auth-title">Email enviado!</div>
+        <div class="auth-sub">Verifique sua caixa de entrada e clique no link para redefinir sua senha.</div>
+        <button class="auth-btn" onclick="authSwitchTab('login')">Voltar ao login</button>
       </div>
 
       <!-- FORM SIGNUP -->
@@ -1057,6 +1081,7 @@ function createAuthModal() {
   ['signup-email','signup-password'].forEach(id => {
     document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') authSignup(); });
   });
+  document.getElementById('forgot-email').addEventListener('keydown', e => { if(e.key==='Enter') authForgot(); });
 
   injectAuthStyles();
 }
@@ -1145,11 +1170,11 @@ function closeAuthModal() {
   const m = document.getElementById('auth-modal');
   if (m) m.style.display = 'none';
   // Limpar campos e erros
-  ['login-email','login-password','signup-email','signup-password'].forEach(id => {
+  ['login-email','login-password','signup-email','signup-password','forgot-email'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
-  ['login-error','signup-error'].forEach(id => {
+  ['login-error','signup-error','forgot-error'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = '';
   });
@@ -1158,9 +1183,43 @@ function closeAuthModal() {
 function authSwitchTab(tab) {
   document.getElementById('auth-form-login').style.display = tab === 'login' ? 'block' : 'none';
   document.getElementById('auth-form-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('auth-form-forgot').style.display = tab === 'forgot' ? 'block' : 'none';
   document.getElementById('auth-success').style.display = 'none';
+  document.getElementById('auth-forgot-success').style.display = 'none';
   document.getElementById('tab-login').classList.toggle('active', tab === 'login');
   document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  if (tab === 'forgot') setTimeout(() => { const el = document.getElementById('forgot-email'); if(el) el.focus(); }, 50);
+}
+
+async function authForgot() {
+  const email = document.getElementById('forgot-email').value.trim();
+  const errEl = document.getElementById('forgot-error');
+  const btn = document.getElementById('forgot-btn');
+  const btnTxt = document.getElementById('forgot-btn-txt');
+
+  errEl.textContent = '';
+  if (!email) { errEl.textContent = 'Informe seu email.'; return; }
+
+  btn.disabled = true;
+  btnTxt.textContent = 'Enviando...';
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://foodart.com.br'
+    });
+    if (error) {
+      errEl.textContent = 'Erro ao enviar. Verifique o email e tente novamente.';
+      btn.disabled = false;
+      btnTxt.textContent = 'Enviar link';
+      return;
+    }
+    document.getElementById('auth-form-forgot').style.display = 'none';
+    document.getElementById('auth-forgot-success').style.display = 'block';
+  } catch(e) {
+    errEl.textContent = 'Erro ao conectar. Tente novamente.';
+    btn.disabled = false;
+    btnTxt.textContent = 'Enviar link';
+  }
 }
 
 async function authLogin() {
@@ -1255,6 +1314,7 @@ function updateAuthUI(loggedIn) {
 window.authSwitchTab = authSwitchTab;
 window.authLogin = authLogin;
 window.authSignup = authSignup;
+window.authForgot = authForgot;
 window.openAuthModal = openAuthModal;
 
 // ── INIT AUTH ─────────────────────────────────────────────────────────────────
