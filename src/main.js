@@ -1401,6 +1401,17 @@ window.openAuthModal = openAuthModal;
 // ── INIT AUTH ─────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
 
+  // Detectar recovery pelo hash da URL (antes de qualquer outra coisa)
+  if (window.location.hash && window.location.hash.includes('type=recovery')) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      updateAuthUI(true);
+      openResetPasswordModal();
+      history.replaceState(null, '', window.location.pathname);
+      return;
+    }
+  }
+
   // Checar sessão existente
   const { data: { session } } = await supabase.auth.getSession();
   updateAuthUI(!!session);
