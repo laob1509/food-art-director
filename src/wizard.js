@@ -32,7 +32,25 @@ function rotatePlaceholder() {
   nota.placeholder = PLACEHOLDERS[idx];
 }
 
-function startWizard(){
+async function startWizard(){
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { openAuthModal('login'); return; }
+
+  // Verificar assinatura ativa
+  const { data: assinatura } = await supabase
+    .from('assinaturas')
+    .select('ativo, plano')
+    .eq('email', session.user.email)
+    .single();
+
+  if (!assinatura || !assinatura.ativo) {
+    showToast('⚠️ Acesso PRO necessário', 'amber');
+    setTimeout(() => {
+      window.open('https://pay.kiwify.com.br/RPjrbot', '_blank');
+    }, 1000);
+    return;
+  }
+
   document.getElementById('screen-welcome').style.display='none';
   document.getElementById('screen-wizard').style.display='block';
   document.getElementById('nav-bar').style.display='flex';
@@ -521,7 +539,6 @@ function generateVariation() {
     showToast('↺ Nova variação gerada','amber');
   }, 600);
 }
-}
 
 window.startWizard = startWizard;
 window.goNext = goNext;
@@ -641,22 +658,31 @@ function panSelectFood(key) {
   sel.style.display = 'block';
 }
 
-// ── Categorias de alimento simplificadas ─────────────────────────
+// ── Categorias de alimento ────────────────────────────────────────
+var PAN_FOOD_CATS = [
+  {label:'🥐 Padaria / Panificadora', items:['paofrances','paointeg','baguete','brioche','paodece','focaccia','paodequeijo','paodoce','paodelicia','paodebatata','paonachapa','mistoq','croissant','tapioca','crepioca','enroladinhosal','empada','esfiha','bolachas','crostini','grissini','petiscodequeijo','biscoitopolvilho','sopa','caldo']},
+  {label:'🎂 Doceria / Confeitaria', items:['cake','bolofatia','bolosemgluten','cupcake','brownie','pudim','tortadoce','tortafatia','deliciafrutas','sonho','roscadovo','carolina','eclair','milfolhas','brigadeiro','brigadeirogourmet','balabaiana','dessert','cheesecake','cinnamonroll','cookienyc','tiramisu']},
+  {label:'☕ Cafeteria', items:['espresso','coffee','cafecoad','cafeleite','cappuccino','latte','macchiato','mocha','coldbrew','chocolatequente','suconatural','sucopop','cha','limonada','matchalatte','icedlatte','affogato']},
+  {label:'🍔 Hamburgueria', items:['burger','sandwich','savory']},
+  {label:'🍟 Fast-food Premium', items:['hotdog','batatafrita','onionrings']},
+  {label:'🍕 Pizzaria', items:['pizza']},
+  {label:'🥟 Pastelaria / Salgados', items:['pastel','coxinha','tortafrango']},
+  {label:'🍽️ Restaurante / Casual', items:['chicken','salad','drink','generic']},
+  {label:'🇧🇷 Brasileiros Especiais', items:['acai','brigadeiro']}
+];
 function panBuildFoodCats() {
   var container = document.getElementById('pan-food-cats');
-  if (!container || !window.FOOD_CATS) return;
-  container.innerHTML = '';
-  FOOD_CATS.forEach(function(cat) {
-    var div = document.createElement('div');
-    div.style.cssText = 'margin-bottom:10px;';
-    div.innerHTML = '<button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'" style="width:100%;text-align:left;padding:10px 14px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r-sm);font-family:\'Syne\',sans-serif;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;">'+cat.label+'</button><div style="display:none;padding:10px;display:none;"><div class="opts-grid">' +
-      cat.items.map(function(k) {
-        if (!FD[k]) return '';
-        var lbl = FD[k][S.lang==='pt'?'pt':'en'] || k;
-        return '<button class="opt-card" onclick="panSelectFood(\''+k+'\')" style="font-size:11px;">'+lbl+'</button>';
-      }).join('') + '</div></div>';
-    container.appendChild(div);
-  });
+  if (!container) return;
+  var l = S.lang === 'pt' ? 'pt' : 'en';
+  container.innerHTML = PAN_FOOD_CATS.map(function(cat, ci) {
+    var items = cat.items.filter(function(k){ return FD[k]; }).map(function(k) {
+      return '<button class="opt-card" onclick="panSelectFood(\'' + k + '\')" style="font-size:11px;">' + FD[k][l] + '</button>';
+    }).join('');
+    return '<div style="margin-bottom:8px;">' +
+      '<button onclick="var b=document.getElementById(\'pancat' + ci + '\');b.style.display=b.style.display===\'none\'?\'grid\':\'none\'" style="width:100%;text-align:left;padding:10px 14px;background:var(--s2);border:1px solid var(--border2);border-radius:var(--r-sm);font-family:\'Syne\',sans-serif;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;">' + cat.label + '</button>' +
+      '<div id="pancat' + ci + '" style="display:none;"><div class="opts-grid">' + items + '</div></div>' +
+      '</div>';
+  }).join('');
 }
 
 // ── pan-card listeners ────────────────────────────────────────────
@@ -728,7 +754,9 @@ function panReset() {
   if (search) search.value = '';
   var nota = document.getElementById('pan-nota');
   if (nota) nota.value = '';
-  panGoTo(1);
+  // Fechar Panini e voltar ao início geral
+  closePaniniFlow();
+  restart();
 }
 
 // Inicializar flag ao carregar

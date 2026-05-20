@@ -238,11 +238,8 @@ async function startWizard(){
     .single();
 
   if (!assinatura || !assinatura.ativo) {
-    showToast('⚠️ Acesso PRO necessário', 'amber');
-    // Redireciona para página de compra
-    setTimeout(() => {
-    window.open('https://pay.kiwify.com.br/RPjrbot', '_blank');
-    }, 1000);
+    document.getElementById('screen-welcome').style.display = 'none';
+    document.getElementById('screen-pro').style.display = 'flex';
     return;
   }
 
@@ -734,7 +731,13 @@ function generateVariation() {
     showToast('↺ Nova variação gerada','amber');
   }, 600);
 }
+function showWelcomeFromPro() {
+  document.getElementById('screen-pro').style.display = 'none';
+  document.getElementById('screen-welcome').style.display = 'block';
+}
+
 window.startWizard = startWizard;
+window.showWelcomeFromPro = showWelcomeFromPro;
 window.goNext = goNext;
 window.goBack = goBack;
 window.copyPrompt = copyPrompt;
@@ -1013,30 +1016,6 @@ function createAuthModal() {
           <span id="login-btn-txt">Entrar</span>
         </button>
         <div class="auth-switch">Não tem conta? <span onclick="authSwitchTab('signup')">Criar conta</span></div>
-        <div class="auth-switch" style="margin-top:8px;">Esqueceu a senha? <span onclick="authSwitchTab('forgot')">Recuperar acesso</span></div>
-      </div>
-
-      <!-- FORM FORGOT -->
-      <div id="auth-form-forgot" style="display:none">
-        <div class="auth-title">Recuperar senha</div>
-        <div class="auth-sub">Informe seu email e enviaremos um link para redefinir sua senha.</div>
-        <div class="auth-field">
-          <label class="auth-label">Email</label>
-          <input class="auth-input" id="forgot-email" type="email" placeholder="seu@email.com" autocomplete="email">
-        </div>
-        <div class="auth-error" id="forgot-error"></div>
-        <button class="auth-btn" id="forgot-btn" onclick="authForgot()">
-          <span id="forgot-btn-txt">Enviar link</span>
-        </button>
-        <div class="auth-switch">Lembrou a senha? <span onclick="authSwitchTab('login')">Voltar ao login</span></div>
-      </div>
-
-      <!-- FORGOT SUCCESS -->
-      <div id="auth-forgot-success" style="display:none">
-        <div class="auth-success-ico">✉️</div>
-        <div class="auth-title">Email enviado!</div>
-        <div class="auth-sub">Verifique sua caixa de entrada e clique no link para redefinir sua senha.</div>
-        <button class="auth-btn" onclick="authSwitchTab('login')">Voltar ao login</button>
       </div>
 
       <!-- FORM SIGNUP -->
@@ -1081,7 +1060,6 @@ function createAuthModal() {
   ['signup-email','signup-password'].forEach(id => {
     document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') authSignup(); });
   });
-  document.getElementById('forgot-email').addEventListener('keydown', e => { if(e.key==='Enter') authForgot(); });
 
   injectAuthStyles();
 }
@@ -1092,7 +1070,6 @@ function injectAuthStyles() {
   s.id = 'auth-styles';
   s.textContent = `
     #auth-modal { position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px; }
-    #reset-modal { position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px; }
     .auth-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px); }
     .auth-box {
       position:relative;z-index:1;
@@ -1171,11 +1148,11 @@ function closeAuthModal() {
   const m = document.getElementById('auth-modal');
   if (m) m.style.display = 'none';
   // Limpar campos e erros
-  ['login-email','login-password','signup-email','signup-password','forgot-email'].forEach(id => {
+  ['login-email','login-password','signup-email','signup-password'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
-  ['login-error','signup-error','forgot-error'].forEach(id => {
+  ['login-error','signup-error'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = '';
   });
@@ -1184,43 +1161,9 @@ function closeAuthModal() {
 function authSwitchTab(tab) {
   document.getElementById('auth-form-login').style.display = tab === 'login' ? 'block' : 'none';
   document.getElementById('auth-form-signup').style.display = tab === 'signup' ? 'block' : 'none';
-  document.getElementById('auth-form-forgot').style.display = tab === 'forgot' ? 'block' : 'none';
   document.getElementById('auth-success').style.display = 'none';
-  document.getElementById('auth-forgot-success').style.display = 'none';
   document.getElementById('tab-login').classList.toggle('active', tab === 'login');
   document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
-  if (tab === 'forgot') setTimeout(() => { const el = document.getElementById('forgot-email'); if(el) el.focus(); }, 50);
-}
-
-async function authForgot() {
-  const email = document.getElementById('forgot-email').value.trim();
-  const errEl = document.getElementById('forgot-error');
-  const btn = document.getElementById('forgot-btn');
-  const btnTxt = document.getElementById('forgot-btn-txt');
-
-  errEl.textContent = '';
-  if (!email) { errEl.textContent = 'Informe seu email.'; return; }
-
-  btn.disabled = true;
-  btnTxt.textContent = 'Enviando...';
-
-  try {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://foodart.com.br'
-    });
-    if (error) {
-      errEl.textContent = 'Erro ao enviar. Verifique o email e tente novamente.';
-      btn.disabled = false;
-      btnTxt.textContent = 'Enviar link';
-      return;
-    }
-    document.getElementById('auth-form-forgot').style.display = 'none';
-    document.getElementById('auth-forgot-success').style.display = 'block';
-  } catch(e) {
-    errEl.textContent = 'Erro ao conectar. Tente novamente.';
-    btn.disabled = false;
-    btnTxt.textContent = 'Enviar link';
-  }
 }
 
 async function authLogin() {
@@ -1315,115 +1258,10 @@ function updateAuthUI(loggedIn) {
 window.authSwitchTab = authSwitchTab;
 window.authLogin = authLogin;
 window.authSignup = authSignup;
-window.authForgot = authForgot;
 window.openAuthModal = openAuthModal;
-
-// ── RESET PASSWORD MODAL ──────────────────────────────────────────────────────
-function openResetPasswordModal() {
-  injectAuthStyles();
-  // Criar modal se não existir
-  if (!document.getElementById('reset-modal')) {
-    const m = document.createElement('div');
-    m.id = 'reset-modal';
-    m.innerHTML = `
-      <div class="auth-backdrop" id="reset-backdrop"></div>
-      <div class="auth-box">
-        <div class="auth-logo">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <circle cx="12" cy="13" r="4"/>
-          </svg>
-          <span class="auth-logo-star">✦</span>
-        </div>
-        <div id="reset-form">
-          <div class="auth-title">Nova senha</div>
-          <div class="auth-sub">Escolha uma nova senha para sua conta.</div>
-          <div class="auth-field">
-            <label class="auth-label">Nova senha</label>
-            <input class="auth-input" id="reset-password" type="password" placeholder="mínimo 6 caracteres" autocomplete="new-password">
-          </div>
-          <div class="auth-field">
-            <label class="auth-label">Confirmar senha</label>
-            <input class="auth-input" id="reset-password-confirm" type="password" placeholder="repita a senha" autocomplete="new-password">
-          </div>
-          <div class="auth-error" id="reset-error"></div>
-          <button class="auth-btn" id="reset-btn" onclick="authResetPassword()">
-            <span id="reset-btn-txt">Salvar nova senha</span>
-          </button>
-        </div>
-        <div id="reset-success" style="display:none">
-          <div class="auth-success-ico">✦</div>
-          <div class="auth-title">Senha atualizada!</div>
-          <div class="auth-sub">Sua senha foi redefinida com sucesso.</div>
-          <button class="auth-btn" onclick="closeResetModal()">Continuar</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(m);
-    document.getElementById('reset-password').addEventListener('keydown', e => { if(e.key==='Enter') authResetPassword(); });
-    document.getElementById('reset-password-confirm').addEventListener('keydown', e => { if(e.key==='Enter') authResetPassword(); });
-  }
-  document.getElementById('reset-modal').style.display = 'flex';
-  document.getElementById('reset-form').style.display = 'block';
-  document.getElementById('reset-success').style.display = 'none';
-  document.getElementById('reset-error').textContent = '';
-  document.getElementById('reset-password').value = '';
-  document.getElementById('reset-password-confirm').value = '';
-  setTimeout(() => { document.getElementById('reset-password').focus(); }, 100);
-}
-
-function closeResetModal() {
-  const m = document.getElementById('reset-modal');
-  if (m) m.style.display = 'none';
-}
-
-async function authResetPassword() {
-  const pass = document.getElementById('reset-password').value;
-  const confirm = document.getElementById('reset-password-confirm').value;
-  const errEl = document.getElementById('reset-error');
-  const btn = document.getElementById('reset-btn');
-  const btnTxt = document.getElementById('reset-btn-txt');
-
-  errEl.textContent = '';
-  if (pass.length < 6) { errEl.textContent = 'A senha deve ter ao menos 6 caracteres.'; return; }
-  if (pass !== confirm) { errEl.textContent = 'As senhas não coincidem.'; return; }
-
-  btn.disabled = true;
-  btnTxt.textContent = 'Salvando...';
-
-  try {
-    const { error } = await supabase.auth.updateUser({ password: pass });
-    if (error) {
-      errEl.textContent = 'Erro ao atualizar senha. Tente novamente.';
-      btn.disabled = false;
-      btnTxt.textContent = 'Salvar nova senha';
-      return;
-    }
-    document.getElementById('reset-form').style.display = 'none';
-    document.getElementById('reset-success').style.display = 'block';
-  } catch(e) {
-    errEl.textContent = 'Erro ao conectar. Tente novamente.';
-    btn.disabled = false;
-    btnTxt.textContent = 'Salvar nova senha';
-  }
-}
-
-window.authResetPassword = authResetPassword;
-window.closeResetModal = closeResetModal;
 
 // ── INIT AUTH ─────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
-
-  // Detectar recovery pelo hash da URL (type=recovery)
-  if (window.location.hash && window.location.hash.includes('type=recovery')) {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      updateAuthUI(true);
-      openResetPasswordModal();
-      // Limpar o hash da URL sem reload
-      history.replaceState(null, '', window.location.pathname);
-    }
-  }
 
   // Checar sessão existente
   const { data: { session } } = await supabase.auth.getSession();
@@ -1432,10 +1270,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   // Escutar mudanças de auth
   supabase.auth.onAuthStateChange((_event, session) => {
     updateAuthUI(!!session);
-    // Detectar recovery — abrir modal de nova senha
-    if (_event === 'PASSWORD_RECOVERY') {
-      openResetPasswordModal();
-    }
   });
 
   // Botão CRIAR CONTA
