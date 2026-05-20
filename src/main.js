@@ -736,8 +736,85 @@ function showWelcomeFromPro() {
   document.getElementById('screen-welcome').style.display = 'block';
 }
 
+function openResetPasswordModal() {
+  if (document.getElementById('reset-modal')) return;
+  const modal = document.createElement('div');
+  modal.id = 'reset-modal';
+  modal.innerHTML = `
+    <div class="auth-backdrop" id="reset-backdrop"></div>
+    <div class="auth-box" style="max-width:380px;width:100%;position:relative;z-index:1;">
+      <div class="auth-logo"><span class="auth-logo-star">✦</span><span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--cream);letter-spacing:.05em;">FOOD ART DIRECTOR</span></div>
+      <div id="reset-form">
+        <div class="auth-title">Nova senha</div>
+        <div class="auth-sub">Digite sua nova senha para recuperar o acesso.</div>
+        <div class="auth-field">
+          <label class="auth-label">Nova senha</label>
+          <input class="auth-input" id="reset-password" type="password" placeholder="mínimo 6 caracteres" autocomplete="new-password">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">Confirmar senha</label>
+          <input class="auth-input" id="reset-password-confirm" type="password" placeholder="repita a senha" autocomplete="new-password">
+        </div>
+        <div class="auth-error" id="reset-error"></div>
+        <button class="auth-btn" id="reset-btn" onclick="doResetPassword()">
+          <span id="reset-btn-txt">Salvar nova senha</span>
+        </button>
+      </div>
+      <div id="reset-success" style="display:none;text-align:center;">
+        <div class="auth-success-ico">✦</div>
+        <div class="auth-title">Senha atualizada!</div>
+        <div class="auth-sub">Sua senha foi redefinida com sucesso.</div>
+        <button class="auth-btn" onclick="closeResetModal()">Entrar no app</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  injectAuthStyles();
+  document.getElementById('reset-password').addEventListener('keydown', e => { if(e.key==='Enter') doResetPassword(); });
+  document.getElementById('reset-password-confirm').addEventListener('keydown', e => { if(e.key==='Enter') doResetPassword(); });
+}
+
+async function doResetPassword() {
+  const password = document.getElementById('reset-password').value;
+  const confirm = document.getElementById('reset-password-confirm').value;
+  const errEl = document.getElementById('reset-error');
+  const btn = document.getElementById('reset-btn');
+  const btnTxt = document.getElementById('reset-btn-txt');
+
+  errEl.textContent = '';
+  if (password.length < 6) { errEl.textContent = 'A senha deve ter ao menos 6 caracteres.'; return; }
+  if (password !== confirm) { errEl.textContent = 'As senhas não coincidem.'; return; }
+
+  btn.disabled = true;
+  btnTxt.textContent = 'Salvando...';
+
+  try {
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) {
+      errEl.textContent = 'Erro ao atualizar senha. Tente novamente.';
+      btn.disabled = false;
+      btnTxt.textContent = 'Salvar nova senha';
+      return;
+    }
+    document.getElementById('reset-form').style.display = 'none';
+    document.getElementById('reset-success').style.display = 'block';
+  } catch(e) {
+    errEl.textContent = 'Erro ao conectar. Tente novamente.';
+    btn.disabled = false;
+    btnTxt.textContent = 'Salvar nova senha';
+  }
+}
+
+function closeResetModal() {
+  const m = document.getElementById('reset-modal');
+  if (m) m.remove();
+  updateAuthUI(true);
+}
+
 window.startWizard = startWizard;
 window.showWelcomeFromPro = showWelcomeFromPro;
+window.doResetPassword = doResetPassword;
+window.closeResetModal = closeResetModal;
 window.goNext = goNext;
 window.goBack = goBack;
 window.copyPrompt = copyPrompt;
@@ -1095,6 +1172,7 @@ function injectAuthStyles() {
   s.id = 'auth-styles';
   s.textContent = `
     #auth-modal { position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px; }
+    #reset-modal { position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px; }
     .auth-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px); }
     .auth-box {
       position:relative;z-index:1;
@@ -1328,7 +1406,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   updateAuthUI(!!session);
 
   // Escutar mudanças de auth
-  supabase.auth.onAuthStateChange((_event, session) => {
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      openResetPasswordModal();
+      return;
+    }
     updateAuthUI(!!session);
   });
 
