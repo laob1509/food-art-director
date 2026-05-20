@@ -1228,6 +1228,9 @@ function injectAuthStyles() {
     }
     .auth-btn:hover { background:linear-gradient(160deg,rgba(180,115,10,0.95),rgba(120,65,5,0.98));transform:translateY(-1px); }
     .auth-btn:disabled { opacity:.5;cursor:not-allowed;transform:none; }
+    .auth-btn-spinner { width:13px;height:13px;border:2px solid rgba(200,134,10,0.25);border-top:2px solid rgba(240,220,180,0.8);border-radius:50%;animation:authSpin .7s linear infinite;display:inline-block;flex-shrink:0; }
+    @keyframes authSpin { to { transform:rotate(360deg); } }
+    .auth-btn-inner { display:flex;align-items:center;justify-content:center;gap:8px; }
     .auth-switch { font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);text-align:center;margin-top:16px; }
     .auth-switch span { color:var(--amber);cursor:pointer;text-decoration:underline; }
     .auth-success-ico { font-size:32px;text-align:center;margin-bottom:12px;color:var(--amber); }
@@ -1272,6 +1275,18 @@ function authSwitchTab(tab) {
   if (tab === 'forgot') setTimeout(() => { const el = document.getElementById('forgot-email'); if(el) el.focus(); }, 50);
 }
 
+function setLoading(btnId, txtId, loading, loadingText, defaultText) {
+  const btn = document.getElementById(btnId);
+  const txt = document.getElementById(txtId);
+  if (!btn || !txt) return;
+  btn.disabled = loading;
+  if (loading) {
+    txt.innerHTML = `<span class="auth-btn-inner"><span class="auth-btn-spinner"></span>${loadingText}</span>`;
+  } else {
+    txt.textContent = defaultText;
+  }
+}
+
 async function authForgot() {
   const email = document.getElementById('forgot-email').value.trim();
   const errEl = document.getElementById('forgot-error');
@@ -1281,8 +1296,7 @@ async function authForgot() {
   errEl.textContent = '';
   if (!email) { errEl.textContent = 'Informe seu email.'; return; }
 
-  btn.disabled = true;
-  btnTxt.textContent = 'Enviando...';
+  setLoading('forgot-btn', 'forgot-btn-txt', true, 'Enviando...', 'Enviar link');
 
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -1290,16 +1304,14 @@ async function authForgot() {
     });
     if (error) {
       errEl.textContent = 'Erro ao enviar. Verifique o email e tente novamente.';
-      btn.disabled = false;
-      btnTxt.textContent = 'Enviar link';
+      setLoading('forgot-btn', 'forgot-btn-txt', false, '', 'Enviar link');
       return;
     }
     document.getElementById('auth-form-forgot').style.display = 'none';
     document.getElementById('auth-forgot-success').style.display = 'block';
   } catch(e) {
     errEl.textContent = 'Erro ao conectar. Tente novamente.';
-    btn.disabled = false;
-    btnTxt.textContent = 'Enviar link';
+    setLoading('forgot-btn', 'forgot-btn-txt', false, '', 'Enviar link');
   }
 }
 
@@ -1313,8 +1325,7 @@ async function authLogin() {
   errEl.textContent = '';
   if (!email || !password) { errEl.textContent = 'Preencha email e senha.'; return; }
 
-  btn.disabled = true;
-  btnTxt.textContent = 'Entrando...';
+  setLoading('login-btn', 'login-btn-txt', true, 'Entrando...', 'Entrar');
 
   try {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -1322,8 +1333,7 @@ async function authLogin() {
       errEl.textContent = error.message === 'Invalid login credentials'
         ? 'Email ou senha incorretos.'
         : error.message;
-      btn.disabled = false;
-      btnTxt.textContent = 'Entrar';
+      setLoading('login-btn', 'login-btn-txt', false, '', 'Entrar');
       return;
     }
     if (data.session) {
@@ -1333,8 +1343,7 @@ async function authLogin() {
     }
   } catch(e) {
     errEl.textContent = 'Erro ao conectar. Tente novamente.';
-    btn.disabled = false;
-    btnTxt.textContent = 'Entrar';
+    setLoading('login-btn', 'login-btn-txt', false, '', 'Entrar');
   }
 }
 
@@ -1349,8 +1358,7 @@ async function authSignup() {
   if (!email) { errEl.textContent = 'Informe seu email.'; return; }
   if (password.length < 6) { errEl.textContent = 'Senha deve ter ao menos 6 caracteres.'; return; }
 
-  btn.disabled = true;
-  btnTxt.textContent = 'Criando conta...';
+  setLoading('signup-btn', 'signup-btn-txt', true, 'Criando conta...', 'Criar conta');
 
   try {
     const { data, error } = await supabase.auth.signUp({ email, password });
@@ -1358,24 +1366,20 @@ async function authSignup() {
       errEl.textContent = error.message === 'User already registered'
         ? 'Este email já está cadastrado.'
         : error.message;
-      btn.disabled = false;
-      btnTxt.textContent = 'Criar conta';
+      setLoading('signup-btn', 'signup-btn-txt', false, '', 'Criar conta');
       return;
     }
-    // Se já confirmado automaticamente (sem email confirm)
     if (data.session) {
       closeAuthModal();
       updateAuthUI(true);
       showToast('✦ Conta criada! Bem-vindo!', 'success');
     } else {
-      // Precisa confirmar email
       document.getElementById('auth-form-signup').style.display = 'none';
       document.getElementById('auth-success').style.display = 'block';
     }
   } catch(e) {
     errEl.textContent = 'Erro ao criar conta. Tente novamente.';
-    btn.disabled = false;
-    btnTxt.textContent = 'Criar conta';
+    setLoading('signup-btn', 'signup-btn-txt', false, '', 'Criar conta');
   }
 }
 
