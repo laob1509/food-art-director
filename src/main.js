@@ -3,7 +3,7 @@ import { supabase } from './supabase'
 // ══════════════════════════════════════════════════════════════════
 // NANO BANANA — Geração de Imagem via Gemini Flash (Gratuito)
 // ══════════════════════════════════════════════════════════════════
-var GEMINI_API_KEY = 'AIzaSyBzEdUU1uiw6KEm2OaVm3SYvZfbC6qAgXw';
+var GEMINI_API_KEY = 'AIzaSyDKk978zFNslN5XlHAG4cgSHN9Itl9bv34';
 
 async function generateImage() {
   if (!curPrompt) { showToast('Gere um prompt primeiro', 'amber'); return; }
@@ -484,7 +484,7 @@ function renderPrompt(){
   if(!curPrompt){ob.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-family:DM Mono,monospace;font-size:11px">Erro ao gerar prompt. Tente novamente.</div>';return;}
   var isMJ=S.model==='midjourney';
   var rendered=isMJ?curPrompt:curPrompt.replace(/^([A-ZÁÀÉÊÍÓÔÚÇ][A-ZÁÀÉÊÍÓÔÚÇ\s&\/\-]+\n)/gm,'<span class="st">$1</span>').replace(/\n/g,'<br>');
-  ob.innerHTML='<div class="ptxt">'+rendered+'</div>'+'<div class="img-generate-area"><button id="btn-generate-image" class="btn-gen-image" onclick="generateImage()">✨ Gerar Imagem</button></div>'+'<div id="image-section" class="image-section" style="display:none"></div>';
+  ob.innerHTML='<div class="ptxt">'+rendered+'</div>';
   var td=[];
   if(S.intent&&INTENTS[S.intent])td.push(INTENTS[S.intent].icon+' '+INTENTS[S.intent].name);
   if(S.food&&FD[S.food])td.push(FD[S.food][S.lang==='pt'?'pt':'en']);
@@ -891,7 +891,6 @@ window.closeResetModal = closeResetModal;
 window.goNext = goNext;
 window.goBack = goBack;
 window.copyPrompt = copyPrompt;
-window.generateImage = generateImage;
 window.restart = restart;
 window.generateVariation = generateVariation;
 window.setLang = setLang;
