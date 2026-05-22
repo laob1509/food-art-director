@@ -294,15 +294,366 @@
       </div>
     </div>
 
-    <!-- CAT: Brasileiros -->
+    <!-- CAT: Pizzaria -->
     <div class="food-accordion">
-      <button class="food-cat-btn" onclick="toggleCat('cat-br',this)">
-        <span>🇧🇷 Brasileiros Especiais</span><span class="cat-arr">▼</span>
+      <button class="food-cat-btn" onclick="toggleCat('cat-pizza',this)">
+        <span>🍕 Pizzaria</span><span class="cat-arr">▼</span>
       </button>
-      <div class="food-cat-body" id="cat-br" style="display:none">
+      <div class="food-cat-body" id="cat-pizza" style="display:none">
         <div class="opts-grid">
-          <button class="opt-card" data-g="food" data-v="acai">🫐 Açaí</button>
-          <button class="opt-card" data-g="food" data-v="brigadeiro">🍫 Brigadeiro</button>
+          <button class="opt-card" data-g="food" data-v="pizza">🍕 Pizza Inteira</button>
+          <button class="opt-card" data-g="food" data-v="pizzafatia">🍕 Fatia com Queijo</button>
+          <button class="opt-card" data-g="food" data-v="pizzaborda">🍕 Borda Recheada</button>
+          <button class="opt-card" data-g="food" data-v="pizzamargherita">🍕 Pizza Margherita</button>
+          <button class="opt-card" data-g="food" data-v="pizzaforno">🍕 Pizza no Forno</button>
+          <button class="opt-card" data-g="food" data-v="pizzanapolitana">🍕 Pizza Napolitana</button>
+          <button class="opt-card" data-g="food" data-v="pizzacalabresa">🍕 Pizza de Calabresa</button>
+          <button class="opt-card" data-g="food" data-v="pizzaportug">🍕 Pizza Portuguesa</button>
+          <button class="opt-card" data-g="food" data-v="pizzaquatroq">🍕 Pizza Quatro Queijos</button>
+          <button class="opt-card" data-g="food" data-v="pizzadoce">🍕 Pizza Doce</button>
+          <button class="opt-card" data-g="food" data-v="calzone">🥙 Calzone</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Sushi / Japonês -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-sushi',this)">
+        <span>🍱 Sushi / Japonês</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-sushi" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="niguiri">🍣 Niguiri</button>
+          <button class="opt-card" data-g="food" data-v="temaki">🌯 Temaki</button>
+          <button class="opt-card" data-g="food" data-v="uramaki">🍱 Uramaki</button>
+          <button class="opt-card" data-g="food" data-v="sashimi">🍣 Sashimi</button>
+          <button class="opt-card" data-g="food" data-v="combinado">🍱 Combinado</button>
+          <button class="opt-card" data-g="food" data-v="omakase">🦐 Omakase</button>
+          <button class="opt-card" data-g="food" data-v="missoshiru">🍜 Missoshiru</button>
+          <button class="opt-card" data-g="food" data-v="hotroll">🍱 Hot Roll</button>
+          <button class="opt-card" data-g="food" data-v="gunkan">🥢 Gunkan</button>
+          <button class="opt-card" data-g="food" data-v="hossomaki">🍣 Hossomaki</button>
+          <button class="opt-card" data-g="food" data-v="guioza">🥟 Guioza</button>
+          <button class="opt-card" data-g="food" data-v="yakisoba">🍜 Yakisoba</button>
+          <button class="opt-card" data-g="food" data-v="poke">🥗 Poke Bowl</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Açaíteria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-acai',this)">
+        <span>🫐 Açaíteria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-acai" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="acaibowl">🫐 Bowl de Açaí</button>
+          <button class="opt-card" data-g="food" data-v="acai">🫐 Açaí na Tigela</button>
+          <button class="opt-card" data-g="food" data-v="acaifrutas">🫐 Açaí com Frutas</button>
+          <button class="opt-card" data-g="food" data-v="acaicremoso">🫐 Açaí Cremoso</button>
+          <button class="opt-card" data-g="food" data-v="copoacai">🫐 Copo de Açaí</button>
+          <button class="opt-card" data-g="food" data-v="sorvetacai">🍨 Sorvete de Açaí</button>
+          <button class="opt-card" data-g="food" data-v="pitayabowl">🫐 Pitaya Bowl</button>
+          <button class="opt-card" data-g="food" data-v="smoothiebowl">🥗 Smoothie Bowl</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Churrascaria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-churrasco',this)">
+        <span>🥩 Churrascaria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-churrasco" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="picanha">🥩 Picanha</button>
+          <button class="opt-card" data-g="food" data-v="costela">🍖 Costela</button>
+          <button class="opt-card" data-g="food" data-v="fraldinha">🥓 Fraldinha</button>
+          <button class="opt-card" data-g="food" data-v="espetinho">🍖 Espetinho</button>
+          <button class="opt-card" data-g="food" data-v="contraffile">🥩 Contra-filé</button>
+          <button class="opt-card" data-g="food" data-v="maminha">🍖 Maminha</button>
+          <button class="opt-card" data-g="food" data-v="tomahawk">🥩 Tomahawk</button>
+          <button class="opt-card" data-g="food" data-v="cupim">🥩 Cupim</button>
+          <button class="opt-card" data-g="food" data-v="taboracarnes">🥩 Tábua de Carnes</button>
+          <button class="opt-card" data-g="food" data-v="linguicaartesanal">🌭 Linguiça Artesanal</button>
+          <button class="opt-card" data-g="food" data-v="frangobrasa">🍗 Frango na Brasa</button>
+          <button class="opt-card" data-g="food" data-v="legumesgrelha">🌽 Legumes na Grelha</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Sorveteria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-sorvete',this)">
+        <span>🍦 Sorveteria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-sorvete" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="sorvetecasquinha">🍦 Sorvete na Casquinha</button>
+          <button class="opt-card" data-g="food" data-v="sundae">🍨 Sundae</button>
+          <button class="opt-card" data-g="food" data-v="frozenyogurt">🍧 Frozen Yogurt</button>
+          <button class="opt-card" data-g="food" data-v="picole">🍦 Picolé</button>
+          <button class="opt-card" data-g="food" data-v="milkshake">🍨 Milkshake</button>
+          <button class="opt-card" data-g="food" data-v="gelato">🍦 Gelato</button>
+          <button class="opt-card" data-g="food" data-v="sorbet">🧊 Sorbet</button>
+          <button class="opt-card" data-g="food" data-v="tacasorvete">🍨 Taça de Sorvete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Marmitaria Fitness -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-fitness',this)">
+        <span>🥗 Marmitaria Fitness</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-fitness" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="marmitafit">🥗 Marmita Fitness</button>
+          <button class="opt-card" data-g="food" data-v="saladaproteica">🥗 Salada Proteica</button>
+          <button class="opt-card" data-g="food" data-v="frangogrelha">🍗 Frango Grelhado</button>
+          <button class="opt-card" data-g="food" data-v="bowlsaudavel">🥑 Bowl Saudável</button>
+          <button class="opt-card" data-g="food" data-v="mealprep">🫙 Meal Prep</button>
+          <button class="opt-card" data-g="food" data-v="legumesvapor">🥦 Legumes no Vapor</button>
+          <button class="opt-card" data-g="food" data-v="potegranola">🫙 Pote de Granola</button>
+          <button class="opt-card" data-g="food" data-v="wrapfit">🥗 Wrap Fit</button>
+          <button class="opt-card" data-g="food" data-v="marmitalowcarb">🥗 Marmita Low Carb</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Drinks / Coquetelaria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-drinks',this)">
+        <span>🍹 Drinks / Coquetelaria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-drinks" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="coquetel">🍹 Coquetel</button>
+          <button class="opt-card" data-g="food" data-v="caipirinha">🍹 Caipirinha</button>
+          <button class="opt-card" data-g="food" data-v="spritz">🥂 Spritz</button>
+          <button class="opt-card" data-g="food" data-v="mojito">🍹 Mojito</button>
+          <button class="opt-card" data-g="food" data-v="martini">🍸 Martini</button>
+          <button class="opt-card" data-g="food" data-v="negroni">🧉 Negroni</button>
+          <button class="opt-card" data-g="food" data-v="gintonica">🍹 Gin Tônica</button>
+          <button class="opt-card" data-g="food" data-v="whiskydrink">🥃 Whisky</button>
+          <button class="opt-card" data-g="food" data-v="drinkgeloseco">🧊 Drink com Gelo Seco</button>
+          <button class="opt-card" data-g="food" data-v="drinkfrozen">🍹 Drink Frozen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Adega / Wine Bar -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-wine',this)">
+        <span>🍷 Adega / Wine Bar</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-wine" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="vinhotinto">🍷 Vinho Tinto</button>
+          <button class="opt-card" data-g="food" data-v="vinhobranc">🥂 Vinho Branco</button>
+          <button class="opt-card" data-g="food" data-v="vinhorose">🍷 Vinho Rosé</button>
+          <button class="opt-card" data-g="food" data-v="espumante">🥂 Espumante</button>
+          <button class="opt-card" data-g="food" data-v="champanhe">🍾 Champanhe</button>
+          <button class="opt-card" data-g="food" data-v="tabuafrios">🧀 Tábua de Frios</button>
+          <button class="opt-card" data-g="food" data-v="antipasto">🫒 Antipasto</button>
+          <button class="opt-card" data-g="food" data-v="charcuterie">🥩 Charcuterie Board</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Doceria Fina -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-doceriafina',this)">
+        <span>🍬 Doceria Fina</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-doceriafina" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="trufa">🍫 Trufa</button>
+          <button class="opt-card" data-g="food" data-v="petitgateau">🍮 Petit Gateau</button>
+          <button class="opt-card" data-g="food" data-v="mousse">🍫 Mousse</button>
+          <button class="opt-card" data-g="food" data-v="pave">🍰 Pavê</button>
+          <button class="opt-card" data-g="food" data-v="cremebrulee">🍮 Crème Brûlée</button>
+          <button class="opt-card" data-g="food" data-v="ganache">🍫 Ganache</button>
+          <button class="opt-card" data-g="food" data-v="balabaiana">🍬 Bala Baiana</button>
+          <button class="opt-card" data-g="food" data-v="pannacotta">🍮 Panna Cotta</button>
+          <button class="opt-card" data-g="food" data-v="macaron">🍬 Macaron</button>
+          <button class="opt-card" data-g="food" data-v="entrement">🎂 Entremets</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Tapiocaria -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-tapioca',this)">
+        <span>🫓 Tapiocaria</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-tapioca" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="tapioca">🫓 Tapioca Simples</button>
+          <button class="opt-card" data-g="food" data-v="tapiocarecheada">🫓 Tapioca Recheada</button>
+          <button class="opt-card" data-g="food" data-v="tapiocastring">🫓 Tapioca Doce</button>
+          <button class="opt-card" data-g="food" data-v="tapiocafrango">🫓 Tapioca de Frango</button>
+          <button class="opt-card" data-g="food" data-v="tapiocraft">🫓 Tapioca Fit</button>
+          <button class="opt-card" data-g="food" data-v="tapiocagourmet">🫓 Tapioca Gourmet</button>
+          <button class="opt-card" data-g="food" data-v="dadinhatapioca">🫓 Dadinho de Tapioca</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Comida Nordestina -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-nordestino',this)">
+        <span>🫘 Comida Nordestina</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-nordestino" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="feijverde">🫘 Feijão Verde</button>
+          <button class="opt-card" data-g="food" data-v="carndesol">🍖 Carne de Sol</button>
+          <button class="opt-card" data-g="food" data-v="baiaodedois">🥘 Baião de Dois</button>
+          <button class="opt-card" data-g="food" data-v="feijaotrope">🫘 Feijão Tropeiro</button>
+          <button class="opt-card" data-g="food" data-v="galinhacaipira">🍗 Galinha Caipira</button>
+          <button class="opt-card" data-g="food" data-v="moqueca">🍛 Moqueca</button>
+          <button class="opt-card" data-g="food" data-v="feijoada">🫘 Feijoada</button>
+          <button class="opt-card" data-g="food" data-v="sarapatel">🥘 Sarapatel</button>
+          <button class="opt-card" data-g="food" data-v="cuscuznordest">🫓 Cuscuz Nordestino</button>
+          <button class="opt-card" data-g="food" data-v="queijcoalho">🧀 Queijo Coalho</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Self-Service / Buffet -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-buffet',this)">
+        <span>🍽️ Self-Service / Buffet</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-buffet" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="pratobuffet">🍽️ Prato Montado</button>
+          <button class="opt-card" data-g="food" data-v="pfbrasileiro">🍽️ PF Brasileiro</button>
+          <button class="opt-card" data-g="food" data-v="frangoassado">🍗 Frango Assado</button>
+          <button class="opt-card" data-g="food" data-v="carneassada">🥩 Carne Assada</button>
+          <button class="opt-card" data-g="food" data-v="saladacompleta">🥗 Salada Completa</button>
+          <button class="opt-card" data-g="food" data-v="arrozfeijao">🍛 Arroz e Feijão</button>
+          <button class="opt-card" data-g="food" data-v="strogonoff">🥘 Strogonoff</button>
+          <button class="opt-card" data-g="food" data-v="ensopado">🍲 Ensopado</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Food Truck -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-foodtruck',this)">
+        <span>🚚 Food Truck</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-foodtruck" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="tacos">🌮 Tacos</button>
+          <button class="opt-card" data-g="food" data-v="burgerrua">🍔 Burger de Rua</button>
+          <button class="opt-card" data-g="food" data-v="kebab">🥙 Kebab</button>
+          <button class="opt-card" data-g="food" data-v="batatatemperada">🍟 Batata Temperada</button>
+          <button class="opt-card" data-g="food" data-v="wrap">🌯 Wrap</button>
+          <button class="opt-card" data-g="food" data-v="wafflesalgado">🧇 Waffle Salgado</button>
+          <button class="opt-card" data-g="food" data-v="churros">🍡 Churros</button>
+          <button class="opt-card" data-g="food" data-v="crepe">🫓 Crepe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Comida Italiana -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-italiana',this)">
+        <span>🍝 Comida Italiana</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-italiana" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="lasanha">🍝 Lasanha</button>
+          <button class="opt-card" data-g="food" data-v="carbonara">🍝 Carbonara</button>
+          <button class="opt-card" data-g="food" data-v="fettuccine">🍝 Fettuccine</button>
+          <button class="opt-card" data-g="food" data-v="ravioli">🍝 Ravioli</button>
+          <button class="opt-card" data-g="food" data-v="gnocchi">🥟 Nhoque</button>
+          <button class="opt-card" data-g="food" data-v="risoto">🍚 Risoto</button>
+          <button class="opt-card" data-g="food" data-v="polpetone">🍖 Polpetone</button>
+          <button class="opt-card" data-g="food" data-v="bruschettaitaliana">🍞 Bruschetta</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Comida Árabe -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-arabe',this)">
+        <span>🥙 Comida Árabe</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-arabe" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="shawarma">🥙 Shawarma</button>
+          <button class="opt-card" data-g="food" data-v="kibecru">🥩 Kibe Cru</button>
+          <button class="opt-card" data-g="food" data-v="kibe">🥟 Kibe Frito</button>
+          <button class="opt-card" data-g="food" data-v="homus">🫘 Homus</button>
+          <button class="opt-card" data-g="food" data-v="tabule">🌿 Tabule</button>
+          <button class="opt-card" data-g="food" data-v="falafel">🧆 Falafel</button>
+          <button class="opt-card" data-g="food" data-v="kafta">🍖 Kafta</button>
+          <button class="opt-card" data-g="food" data-v="esfiha">🫓 Esfiha</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Frango Frito -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-frangofrito',this)">
+        <span>🍗 Frango Frito</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-frangofrito" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="baldofrango">🍗 Balde de Frango</button>
+          <button class="opt-card" data-g="food" data-v="chickenwings">🍗 Chicken Wings</button>
+          <button class="opt-card" data-g="food" data-v="frangocrocante">🍗 Frango Crocante</button>
+          <button class="opt-card" data-g="food" data-v="chickensandwich">🥪 Chicken Sandwich</button>
+          <button class="opt-card" data-g="food" data-v="tenders">🍗 Tenders</button>
+          <button class="opt-card" data-g="food" data-v="nuggets">🍗 Nuggets</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Café da Manhã / Brunch -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-brunch',this)">
+        <span>🍳 Café da Manhã / Brunch</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-brunch" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="cafemanha">☕ Café da Manhã Completo</button>
+          <button class="opt-card" data-g="food" data-v="mesacafe">🍽️ Mesa de Café</button>
+          <button class="opt-card" data-g="food" data-v="brunch">🥞 Brunch</button>
+          <button class="opt-card" data-g="food" data-v="ovosestrelad">🍳 Ovos Estrelados</button>
+          <button class="opt-card" data-g="food" data-v="ovomexido">🍳 Ovos Mexidos</button>
+          <button class="opt-card" data-g="food" data-v="pancakes">🥞 Panquecas</button>
+          <button class="opt-card" data-g="food" data-v="frenchtoast">🍞 French Toast</button>
+          <button class="opt-card" data-g="food" data-v="quiche">🥧 Quiche</button>
+          <button class="opt-card" data-g="food" data-v="folhado">🥐 Folhado</button>
+          <button class="opt-card" data-g="food" data-v="smoothie">🥤 Smoothie</button>
+          <button class="opt-card" data-g="food" data-v="flatwhite">☕ Flat White</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT: Restaurante / Casual (expandida) -->
+    <div class="food-accordion">
+      <button class="food-cat-btn" onclick="toggleCat('cat-rest',this)">
+        <span>🍽️ Restaurante / Casual</span><span class="cat-arr">▼</span>
+      </button>
+      <div class="food-cat-body" id="cat-rest" style="display:none">
+        <div class="opts-grid">
+          <button class="opt-card" data-g="food" data-v="parmegiana">🍖 Parmegiana</button>
+          <button class="opt-card" data-g="food" data-v="risoto">🍚 Risoto</button>
+          <button class="opt-card" data-g="food" data-v="massa">🍝 Massa</button>
+          <button class="opt-card" data-g="food" data-v="salmao">🐟 Salmão</button>
+          <button class="opt-card" data-g="food" data-v="camarao">🦐 Camarão</button>
+          <button class="opt-card" data-g="food" data-v="lasanha">🍝 Lasanha</button>
+          <button class="opt-card" data-g="food" data-v="filemingnon">🥩 Filé Mignon</button>
+          <button class="opt-card" data-g="food" data-v="frutosmar">🦞 Frutos do Mar</button>
+          <button class="opt-card" data-g="food" data-v="chicken">🍗 Frango</button>
+          <button class="opt-card" data-g="food" data-v="salad">🥗 Salada</button>
+          <button class="opt-card" data-g="food" data-v="generic">🍽️ Prato Genérico</button>
         </div>
       </div>
     </div>
