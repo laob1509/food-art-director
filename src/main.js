@@ -1,4 +1,77 @@
 import { supabase } from './supabase'
+
+// ══════════════════════════════════════════════════════════════════
+// NANO BANANA — Geração de Imagem via Gemini Flash (Gratuito)
+// ══════════════════════════════════════════════════════════════════
+var GEMINI_API_KEY = 'AIzaSyBzEdUU1uiw6KEm2OaVm3SYvZfbC6qAgXw';
+
+async function generateImage() {
+  if (!curPrompt) { showToast('Gere um prompt primeiro', 'amber'); return; }
+
+  var btn = document.getElementById('btn-generate-image');
+  var imgSection = document.getElementById('image-section');
+
+  // Estado de loading
+  btn.disabled = true;
+  btn.textContent = '⏳ Gerando imagem...';
+  imgSection.innerHTML = '<div class="img-loading"><div class="gen-dots"><div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div></div><div class="gen-txt">Gerando sua imagem com Nano Banana...</div></div>';
+  imgSection.style.display = 'block';
+
+  // Monta prompt para geração de imagem
+  var imgPrompt = (S.lang === 'pt'
+    ? 'Imagine uma cena de fotografia editorial de alimentos de altíssimo nível. '
+    : 'Imagine a high-end editorial food photography scene. ')
+    + curPrompt.replace(/<[^>]+>/g, '').replace(/\n/g, ' ');
+
+  try {
+    var response = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=' + GEMINI_API_KEY,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: imgPrompt }] }],
+          generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+        })
+      }
+    );
+
+    var data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Erro na API');
+    }
+
+    // Extrai imagem da resposta
+    var imagePart = null;
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      data.candidates[0].content.parts.forEach(function(part) {
+        if (part.inlineData) imagePart = part.inlineData;
+      });
+    }
+
+    if (imagePart) {
+      var src = 'data:' + imagePart.mimeType + ';base64,' + imagePart.data;
+      imgSection.innerHTML =
+        '<div class="img-result">' +
+          '<img src="' + src + '" alt="Imagem gerada" class="generated-img" />' +
+          '<div class="img-actions">' +
+            '<a href="' + src + '" download="foodart-' + Date.now() + '.jpg" class="btn-download">⬇ Baixar imagem</a>' +
+          '</div>' +
+        '</div>';
+      btn.textContent = '🔄 Gerar nova imagem';
+    } else {
+      throw new Error('Nenhuma imagem retornada');
+    }
+  } catch (err) {
+    console.error('Erro ao gerar imagem:', err);
+    imgSection.innerHTML = '<div class="img-error">❌ Erro ao gerar imagem: ' + (err.message || 'Tente novamente') + '</div>';
+    btn.textContent = '✨ Gerar Imagem';
+  }
+
+  btn.disabled = false;
+}
+
 var INTENTS={
   crave:{name:'DESEJO',icon:'🔥',pt:{open:'INSTINTO. A câmera invade o alimento. Impulso imediato.',light:'Luz dura e direcional. Highlights especulares agressivos.',color:'Âmbar queimado, vermelho profundo, dourado intenso.',mood:'URGENTE. VISCERAL. Sensação: Preciso comer isso AGORA.'},en:{open:'INSTINCT. Camera invades the food. Immediate impulse.',light:'Hard directional light. Aggressive specular highlights.',color:'Burnt amber, deep red, intense gold.',mood:'URGENT. VISCERAL. Feeling: I need to eat this NOW.'}},
   comfort:{name:'CONFORTO',icon:'🤗',pt:{open:'SEGURANÇA EMOCIONAL. A câmera acolhe. Evoca lar e memória afetiva.',light:'Luz natural difusa. Temperatura 4000K–4800K.',color:'Creme, caramelo, marrom dourado.',mood:'Quente, aconchegante, autêntico.'},en:{open:'EMOTIONAL SAFETY. Camera welcomes. Evokes home and affective memory.',light:'Soft diffused natural light. Temperature 4000K–4800K.',color:'Cream, caramel, golden brown.',mood:'Warm, cozy, authentic.'}},
@@ -411,7 +484,7 @@ function renderPrompt(){
   if(!curPrompt){ob.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-family:DM Mono,monospace;font-size:11px">Erro ao gerar prompt. Tente novamente.</div>';return;}
   var isMJ=S.model==='midjourney';
   var rendered=isMJ?curPrompt:curPrompt.replace(/^([A-ZÁÀÉÊÍÓÔÚÇ][A-ZÁÀÉÊÍÓÔÚÇ\s&\/\-]+\n)/gm,'<span class="st">$1</span>').replace(/\n/g,'<br>');
-  ob.innerHTML='<div class="ptxt">'+rendered+'</div>';
+  ob.innerHTML='<div class="ptxt">'+rendered+'</div>'+'<div class="img-generate-area"><button id="btn-generate-image" class="btn-gen-image" onclick="generateImage()">✨ Gerar Imagem</button></div>'+'<div id="image-section" class="image-section" style="display:none"></div>';
   var td=[];
   if(S.intent&&INTENTS[S.intent])td.push(INTENTS[S.intent].icon+' '+INTENTS[S.intent].name);
   if(S.food&&FD[S.food])td.push(FD[S.food][S.lang==='pt'?'pt':'en']);
@@ -818,6 +891,7 @@ window.closeResetModal = closeResetModal;
 window.goNext = goNext;
 window.goBack = goBack;
 window.copyPrompt = copyPrompt;
+window.generateImage = generateImage;
 window.restart = restart;
 window.generateVariation = generateVariation;
 window.setLang = setLang;

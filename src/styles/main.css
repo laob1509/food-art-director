@@ -748,3 +748,17 @@ body::after{
 .pan-btn-next:hover{background:rgba(218,165,32,0.2);border-color:rgba(218,165,32,0.9);}
 .pan-btn-back{padding:13px 16px;background:transparent;border:1px solid var(--border2);border-radius:var(--r);font-family:'Syne',sans-serif;font-size:12px;color:var(--text3);cursor:pointer;transition:all var(--tr);}
 .pan-btn-back:hover{color:var(--text2);border-color:var(--border3);}
+
+/* ── NANO BANANA — GERAÇÃO DE IMAGEM ──────────────────────────── */
+.img-generate-area{margin-top:20px;display:flex;justify-content:center;}
+.btn-gen-image{padding:14px 28px;background:linear-gradient(135deg,rgba(218,165,32,0.15),rgba(218,165,32,0.08));border:1.5px solid rgba(218,165,32,0.5);border-radius:var(--r);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:rgba(218,165,32,0.95);cursor:pointer;transition:all var(--tr);letter-spacing:.05em;}
+.btn-gen-image:hover{background:linear-gradient(135deg,rgba(218,165,32,0.25),rgba(218,165,32,0.15));border-color:rgba(218,165,32,0.9);box-shadow:0 0 20px rgba(218,165,32,0.15);}
+.btn-gen-image:disabled{opacity:0.5;cursor:not-allowed;}
+.image-section{margin-top:20px;border-top:1px solid var(--border2);padding-top:20px;}
+.img-loading{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px;color:var(--text3);font-family:'DM Mono',monospace;font-size:11px;}
+.img-result{display:flex;flex-direction:column;gap:12px;align-items:center;}
+.generated-img{width:100%;max-width:512px;border-radius:var(--r);border:1px solid var(--border2);display:block;}
+.img-actions{display:flex;justify-content:center;}
+.btn-download{padding:10px 22px;background:rgba(218,165,32,0.1);border:1px solid rgba(218,165,32,0.4);border-radius:var(--r-sm);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:rgba(218,165,32,0.9);text-decoration:none;cursor:pointer;transition:all var(--tr);}
+.btn-download:hover{background:rgba(218,165,32,0.2);border-color:rgba(218,165,32,0.8);}
+.img-error{padding:16px;border-radius:var(--r-sm);background:rgba(255,80,80,0.08);border:1px solid rgba(255,80,80,0.2);color:rgba(255,120,120,0.9);font-family:'DM Mono',monospace;font-size:11px;text-align:center;}
