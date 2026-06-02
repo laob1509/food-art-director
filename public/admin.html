@@ -5,198 +5,127 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Food Art Director — Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0805;
-    --bg2: #110e08;
-    --bg3: #1a1510;
-    --border: rgba(200,134,10,0.15);
-    --border2: rgba(200,134,10,0.3);
-    --amber: #c8860a;
-    --amber-l: #f0a020;
-    --cream: #f0e8d0;
-    --text: #e8dcc8;
-    --text2: rgba(232,220,200,0.65);
-    --text3: rgba(232,220,200,0.35);
-    --green: #2ecc71;
-    --red: #e74c3c;
-    --blue: #3498db;
-    --r: 10px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', 'Courier New', monospace; min-height: 100vh; }
+:root {
+  --bg-main: #0a0805;
+  --bg-card: #120f0a;
+  --bg-input: #1a160f;
+  --gold: #c8860a;
+  --gold-glow: rgba(200,134,10,0.15);
+  --text-main: #f5f0e8;
+  --text-muted: #8c8273;
+  --border: #262015;
+  --danger: #cf4343;
+  --danger-glow: rgba(207,67,67,0.15);
+  --success: #3db87e;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg-main);color:var(--text-main);font-family:'DM Mono',monospace;font-size:13px;letter-spacing:-0.02em;line-height:1.5;min-height:100vh;}
 
-  /* ── LOGIN ── */
-  #login-screen {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; padding: 20px;
-  }
-  .login-box {
-    background: var(--bg2); border: 1px solid var(--border2);
-    border-radius: 16px; padding: 40px 32px; width: 100%; max-width: 360px;
-    text-align: center;
-  }
-  .login-logo { font-size: 28px; margin-bottom: 8px; }
-  .login-title { font-size: 18px; font-weight: 700; color: var(--cream); margin-bottom: 4px; font-family: serif; }
-  .login-sub { font-size: 11px; color: var(--text3); margin-bottom: 28px; letter-spacing: .05em; text-transform: uppercase; }
-  .login-input {
-    width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.04);
-    border: 1.5px solid rgba(255,255,255,0.08); border-radius: 8px;
-    color: var(--cream); font-family: inherit; font-size: 14px;
-    outline: none; margin-bottom: 12px; transition: border-color .2s;
-  }
-  .login-input:focus { border-color: var(--amber); }
-  .login-btn {
-    width: 100%; padding: 13px; background: linear-gradient(135deg, rgba(160,100,8,.9), rgba(100,55,4,.95));
-    border: 1px solid var(--border2); border-radius: 8px; color: rgba(240,220,180,.95);
-    font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; cursor: pointer; transition: opacity .2s;
-  }
-  .login-btn:hover { opacity: .85; }
-  .login-error { font-size: 11px; color: var(--red); margin-top: 8px; min-height: 16px; }
+/* ── LOGIN ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:40px 32px;width:100%;max-width:360px;text-align:center;}
+.login-logo{font-size:22px;color:var(--gold);margin-bottom:6px;letter-spacing:.1em;}
+.login-title{font-size:15px;font-weight:500;color:var(--text-main);margin-bottom:4px;}
+.login-sub{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:28px;}
+.login-input{width:100%;background:var(--bg-input);border:1px solid var(--border);color:var(--text-main);padding:12px 16px;font-family:inherit;font-size:13px;border-radius:4px;outline:none;margin-bottom:12px;transition:border-color .2s;}
+.login-input:focus{border-color:var(--gold);}
+.login-btn{width:100%;padding:12px;background:var(--gold-glow);border:1px solid var(--gold);color:var(--gold);font-family:inherit;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;border-radius:4px;cursor:pointer;transition:all .2s;}
+.login-btn:hover{background:var(--gold);color:var(--bg-main);}
+.login-error{font-size:11px;color:var(--danger);margin-top:8px;min-height:16px;}
 
-  /* ── ADMIN ── */
-  #admin-screen { display: none; }
+/* ── ADMIN ── */
+#admin-screen{display:none;padding:24px;}
 
-  .topbar {
-    background: var(--bg2); border-bottom: 1px solid var(--border);
-    padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .topbar-left { display: flex; align-items: center; gap: 10px; }
-  .topbar-logo { font-size: 14px; color: var(--amber-l); font-weight: 700; letter-spacing: .05em; }
-  .topbar-badge {
-    background: rgba(200,134,10,.15); border: 1px solid var(--border2);
-    border-radius: 4px; padding: 2px 8px; font-size: 10px; color: var(--amber); letter-spacing: .1em;
-  }
-  .topbar-right { display: flex; align-items: center; gap: 12px; }
-  .btn-refresh {
-    background: none; border: 1px solid var(--border2); border-radius: 6px;
-    color: var(--text2); padding: 6px 12px; font-family: inherit; font-size: 11px;
-    cursor: pointer; transition: all .2s;
-  }
-  .btn-refresh:hover { border-color: var(--amber); color: var(--amber); }
-  .btn-logout { background: none; border: none; color: var(--text3); font-family: inherit; font-size: 11px; cursor: pointer; }
-  .btn-logout:hover { color: var(--red); }
+/* HEADER */
+header{display:flex;justify-content:space-between;align-items:center;padding-bottom:24px;border-bottom:1px solid var(--border);margin-bottom:32px;}
+.logo-area{display:flex;align-items:center;gap:12px;}
+.logo-title{font-size:16px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;}
+.logo-title span{color:var(--gold);}
+.badge-admin{background:var(--gold-glow);border:1px solid var(--gold);color:var(--gold);padding:2px 8px;font-size:10px;text-transform:uppercase;border-radius:3px;}
+.header-actions{display:flex;align-items:center;gap:12px;}
+.last-update{font-size:11px;color:var(--text-muted);}
 
-  .main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+/* BUTTONS */
+.btn{background:transparent;border:1px solid var(--border);color:var(--text-main);padding:8px 16px;font-family:inherit;font-size:12px;cursor:pointer;transition:all .2s;border-radius:4px;display:inline-flex;align-items:center;gap:8px;}
+.btn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-glow);}
+.btn-secondary{color:var(--text-muted);}
+.btn-secondary:hover{border-color:var(--text-muted);color:var(--text-main);background:rgba(255,255,255,0.05);}
+.btn-action-activate{border-color:var(--gold);color:var(--gold);background:var(--gold-glow);padding:6px 12px;font-size:11px;text-transform:uppercase;width:100%;justify-content:center;white-space:nowrap;}
+.btn-action-activate:hover{background:var(--gold);color:var(--bg-main);}
+.btn-action-deactivate{border-color:var(--danger);color:var(--danger);background:var(--danger-glow);padding:6px 12px;font-size:11px;text-transform:uppercase;width:100%;justify-content:center;white-space:nowrap;}
+.btn-action-deactivate:hover{background:var(--danger);color:var(--text-main);}
+.btn-loading{opacity:.5;cursor:not-allowed;pointer-events:none;}
 
-  /* ── METRIC CARDS ── */
-  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
-  .metric-card {
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: var(--r); padding: 16px 18px;
-  }
-  .metric-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
-  .metric-value { font-size: 28px; font-weight: 700; color: var(--cream); }
-  .metric-value.green { color: var(--green); }
-  .metric-value.amber { color: var(--amber-l); }
-  .metric-value.blue { color: var(--blue); }
-  .metric-sub { font-size: 10px; color: var(--text3); margin-top: 4px; }
+/* METRICS */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:32px;}
+.metric-card{background:var(--bg-card);border:1px solid var(--border);padding:20px;border-radius:6px;position:relative;overflow:hidden;transition:border-color .2s;}
+.metric-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--border),transparent);transition:background .2s;}
+.metric-card:hover{border-color:rgba(200,134,10,0.3);}
+.metric-card:hover::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.metric-label{color:var(--text-muted);font-size:11px;text-transform:uppercase;margin-bottom:8px;display:block;}
+.metric-value{font-size:28px;font-weight:500;color:var(--text-main);}
+.metric-value.highlight{color:var(--gold);text-shadow:0 0 10px var(--gold-glow);}
+.metric-value.green{color:var(--success);}
+.metric-value.blue{color:#5dade2;}
 
-  /* ── CONTROLS ── */
-  .controls {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 16px; flex-wrap: wrap;
-  }
-  .search-wrap { position: relative; flex: 1; min-width: 200px; }
-  .search-input {
-    width: 100%; padding: 10px 14px 10px 36px;
-    background: var(--bg2); border: 1px solid var(--border);
-    border-radius: 8px; color: var(--text); font-family: inherit; font-size: 12px;
-    outline: none; transition: border-color .2s;
-  }
-  .search-input:focus { border-color: var(--amber); }
-  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 13px; }
-  .filter-tabs { display: flex; gap: 4px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 4px; }
-  .filter-tab {
-    padding: 6px 14px; border-radius: 5px; font-family: inherit; font-size: 11px;
-    font-weight: 700; letter-spacing: .05em; cursor: pointer; border: none;
-    background: none; color: var(--text3); transition: all .2s; white-space: nowrap;
-  }
-  .filter-tab.active { background: rgba(200,134,10,.15); color: var(--amber-l); }
-  .btn-csv {
-    padding: 10px 16px; background: var(--bg2); border: 1px solid var(--border2);
-    border-radius: 8px; color: var(--text2); font-family: inherit; font-size: 11px;
-    font-weight: 700; cursor: pointer; transition: all .2s; white-space: nowrap;
-  }
-  .btn-csv:hover { border-color: var(--green); color: var(--green); }
+/* CONTROLS */
+.controls-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;background:var(--bg-card);border:1px solid var(--border);padding:16px;border-radius:6px 6px 0 0;border-bottom:none;}
+.search-wrapper{position:relative;flex:1;min-width:280px;}
+.search-input{width:100%;background:var(--bg-input);border:1px solid var(--border);color:var(--text-main);padding:10px 16px;font-family:inherit;border-radius:4px;font-size:13px;transition:all .2s;outline:none;}
+.search-input:focus{border-color:var(--gold);box-shadow:0 0 8px var(--gold-glow);}
+.filters-group{display:flex;gap:8px;flex-wrap:wrap;}
+.filter-btn{background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:8px 14px;font-family:inherit;font-size:12px;cursor:pointer;border-radius:4px;transition:all .2s;}
+.filter-btn:hover{border-color:var(--text-main);color:var(--text-main);}
+.filter-btn.active{background:var(--gold-glow);border-color:var(--gold);color:var(--gold);}
 
-  /* ── TABLE ── */
-  .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
-  .table-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .table-title { font-size: 12px; color: var(--text2); letter-spacing: .05em; text-transform: uppercase; }
-  .table-count { font-size: 11px; color: var(--text3); }
+/* TABLE */
+.table-container{background:var(--bg-card);border:1px solid var(--border);border-radius:0 0 6px 6px;overflow-x:auto;}
+.table-header-info{display:flex;justify-content:space-between;padding:12px 24px;background:rgba(0,0,0,0.2);border-bottom:1px solid var(--border);color:var(--text-muted);font-size:11px;text-transform:uppercase;}
+table{width:100%;border-collapse:collapse;text-align:left;}
+th{color:var(--text-muted);font-weight:400;text-transform:uppercase;font-size:11px;padding:16px 24px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.1);white-space:nowrap;}
+td{padding:14px 24px;border-bottom:1px solid var(--border);vertical-align:middle;word-break:break-word;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(200,134,10,0.02);}
+.col-name{min-width:160px;width:20%;}
+.col-email{min-width:200px;width:24%;color:var(--text-muted);}
+.col-whatsapp{min-width:140px;width:14%;}
+.col-plan{min-width:80px;width:9%;}
+.col-date{min-width:130px;width:12%;color:var(--text-muted);font-size:12px;}
+.col-action{min-width:140px;width:13%;white-space:nowrap;}
 
-  table { width: 100%; border-collapse: collapse; }
-  th {
-    padding: 10px 16px; text-align: left; font-size: 10px; color: var(--text3);
-    text-transform: uppercase; letter-spacing: .1em; border-bottom: 1px solid var(--border);
-    background: var(--bg3); white-space: nowrap;
-  }
-  td { padding: 12px 16px; font-size: 12px; border-bottom: 1px solid rgba(200,134,10,0.06); vertical-align: middle; }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(200,134,10,0.03); }
+/* BADGES */
+.badge-plan{display:inline-block;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:500;text-transform:uppercase;}
+.badge-plan.free{background:rgba(140,130,115,0.1);border:1px solid rgba(140,130,115,0.3);color:var(--text-muted);}
+.badge-plan.pro{background:var(--gold-glow);border:1px solid var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(200,134,10,0.1);}
+.badge-new{display:inline-block;background:rgba(52,152,219,.12);border:1px solid rgba(52,152,219,.25);color:#5dade2;border-radius:3px;font-size:9px;padding:1px 5px;margin-left:5px;text-transform:uppercase;vertical-align:middle;}
 
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 700;
-    letter-spacing: .05em; text-transform: uppercase;
-  }
-  .badge-pro { background: rgba(200,134,10,.15); color: var(--amber-l); border: 1px solid rgba(200,134,10,.3); }
-  .badge-free { background: rgba(232,220,200,.06); color: var(--text3); border: 1px solid rgba(232,220,200,.1); }
-  .badge-new { background: rgba(52,152,219,.12); color: #5dade2; border: 1px solid rgba(52,152,219,.2); }
+.whatsapp-link{color:var(--success);text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
+.whatsapp-link:hover{text-decoration:underline;}
+.anonymous-user{font-style:italic;color:var(--text-muted);}
+.empty-dash{color:rgba(255,255,255,0.15);}
 
-  .status-dot {
-    width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px;
-  }
-  .dot-pro { background: var(--amber-l); box-shadow: 0 0 6px rgba(200,134,10,.6); }
-  .dot-free { background: var(--text3); }
-  .dot-new { background: var(--blue); }
+/* EMPTY / LOADING */
+.empty-state{padding:48px;text-align:center;color:var(--text-muted);}
+.loading-state{padding:48px;text-align:center;color:var(--text-muted);}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(200,134,10,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-  .action-btn {
-    padding: 5px 10px; border-radius: 5px; font-family: inherit; font-size: 10px;
-    font-weight: 700; letter-spacing: .05em; cursor: pointer; border: 1px solid;
-    transition: all .2s; text-transform: uppercase;
-  }
-  .btn-ativar { background: rgba(200,134,10,.1); color: var(--amber-l); border-color: rgba(200,134,10,.3); }
-  .btn-ativar:hover { background: rgba(200,134,10,.2); }
-  .btn-desativar { background: rgba(231,76,60,.08); color: #e74c3c; border-color: rgba(231,76,60,.2); }
-  .btn-desativar:hover { background: rgba(231,76,60,.15); }
-  .btn-loading { opacity: .5; cursor: not-allowed; }
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px 18px;font-size:12px;color:var(--text-main);opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{border-color:rgba(61,184,126,.4);color:var(--success);}
+.toast.error{border-color:rgba(207,67,67,.4);color:var(--danger);}
 
-  .empty-state { padding: 48px; text-align: center; color: var(--text3); font-size: 13px; }
-
-  .whats-link { color: var(--green); text-decoration: none; }
-  .whats-link:hover { text-decoration: underline; }
-
-  .td-name { font-weight: 700; color: var(--cream); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .td-email { color: var(--text2); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .td-date { color: var(--text3); white-space: nowrap; }
-  .td-whats { white-space: nowrap; }
-
-  .toast {
-    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-    background: var(--bg3); border: 1px solid var(--border2);
-    border-radius: 8px; padding: 12px 18px; font-size: 12px; color: var(--cream);
-    opacity: 0; transform: translateY(10px); transition: all .3s; pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
-  .toast.success { border-color: rgba(46,204,113,.4); color: var(--green); }
-  .toast.error { border-color: rgba(231,76,60,.4); color: var(--red); }
-
-  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(200,134,10,.2); border-top-color: var(--amber); border-radius: 50%; animation: spin .7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .loading-state { padding: 48px; text-align: center; }
-
-  @media (max-width: 768px) {
-    .main { padding: 16px; }
-    .controls { flex-direction: column; align-items: stretch; }
-    .filter-tabs { overflow-x: auto; }
-    th:nth-child(4), td:nth-child(4),
-    th:nth-child(5), td:nth-child(5) { display: none; }
-  }
+@media(max-width:768px){
+  #admin-screen{padding:16px;}
+  .metrics-grid{grid-template-columns:repeat(2,1fr);}
+  .controls-bar{flex-direction:column;align-items:stretch;}
+  th:nth-child(5),td:nth-child(5),th:nth-child(6),td:nth-child(6){display:none;}
+}
 </style>
 </head>
 <body>
@@ -215,114 +144,92 @@
 
 <!-- ADMIN -->
 <div id="admin-screen">
-  <div class="topbar">
-    <div class="topbar-left">
-      <span class="topbar-logo">✦ FOOD ART DIRECTOR</span>
-      <span class="topbar-badge">ADMIN</span>
+  <header>
+    <div class="logo-area">
+      <div class="logo-title">✦ Food Art <span>Director</span></div>
+      <span class="badge-admin">Admin</span>
     </div>
-    <div class="topbar-right">
-      <button class="btn-refresh" onclick="loadData()">↺ Atualizar</button>
-      <span id="last-update" style="font-size:10px;color:var(--text3)"></span>
-      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    <div class="header-actions">
+      <span class="last-update" id="last-update"></span>
+      <button class="btn" onclick="loadData()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38"/></svg>
+        Atualizar
+      </button>
+      <button class="btn btn-secondary" onclick="doLogout()">Sair</button>
     </div>
-  </div>
+  </header>
 
-  <div class="main">
-    <!-- METRICS -->
-    <div class="metrics">
-      <div class="metric-card">
-        <div class="metric-label">Total cadastros</div>
-        <div class="metric-value" id="m-total">—</div>
-        <div class="metric-sub">todos os usuários</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Assinantes PRO</div>
-        <div class="metric-value amber" id="m-pro">—</div>
-        <div class="metric-sub">plano ativo</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Plano Free</div>
-        <div class="metric-value" id="m-free">—</div>
-        <div class="metric-sub">sem assinatura</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Taxa de conversão</div>
-        <div class="metric-value green" id="m-conv">—</div>
-        <div class="metric-sub">free → PRO</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Cadastros hoje</div>
-        <div class="metric-value blue" id="m-hoje">—</div>
-        <div class="metric-sub" id="m-hoje-sub">novos usuários</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Com WhatsApp</div>
-        <div class="metric-value" id="m-whats">—</div>
-        <div class="metric-sub">contato disponível</div>
-      </div>
-    </div>
+  <!-- METRICS -->
+  <section class="metrics-grid">
+    <div class="metric-card"><span class="metric-label">Total Cadastros</span><div class="metric-value" id="m-total">—</div></div>
+    <div class="metric-card"><span class="metric-label">Assinantes PRO</span><div class="metric-value highlight" id="m-pro">—</div></div>
+    <div class="metric-card"><span class="metric-label">Plano Free</span><div class="metric-value" id="m-free">—</div></div>
+    <div class="metric-card"><span class="metric-label">Taxa Conversão</span><div class="metric-value green" id="m-conv">—</div></div>
+    <div class="metric-card"><span class="metric-label">Cadastros Hoje</span><div class="metric-value blue" id="m-hoje">—</div></div>
+    <div class="metric-card"><span class="metric-label">Com WhatsApp</span><div class="metric-value" id="m-whats">—</div></div>
+  </section>
 
-    <!-- CONTROLS -->
-    <div class="controls">
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input class="search-input" type="text" id="search-input" placeholder="Buscar por nome, email ou WhatsApp..." oninput="filterTable()">
-      </div>
-      <div class="filter-tabs">
-        <button class="filter-tab active" onclick="setFilter('todos', this)">Todos</button>
-        <button class="filter-tab" onclick="setFilter('pro', this)">✦ PRO</button>
-        <button class="filter-tab" onclick="setFilter('free', this)">Free</button>
-        <button class="filter-tab" onclick="setFilter('sem-whats', this)">Sem WhatsApp</button>
-        <button class="filter-tab" onclick="setFilter('hoje', this)">Hoje</button>
-      </div>
-      <button class="btn-csv" onclick="exportCSV()">⬇ Exportar CSV</button>
+  <!-- CONTROLS -->
+  <section class="controls-bar">
+    <div class="search-wrapper">
+      <input type="text" class="search-input" id="search-input" placeholder="Buscar por nome, email ou WhatsApp..." oninput="filterTable()">
     </div>
+    <div class="filters-group">
+      <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="setFilter('pro',this)">✦ PRO</button>
+      <button class="filter-btn" onclick="setFilter('free',this)">Free</button>
+      <button class="filter-btn" onclick="setFilter('sem-whats',this)">Sem WhatsApp</button>
+      <button class="filter-btn" onclick="setFilter('hoje',this)">Hoje</button>
+    </div>
+    <button class="btn" onclick="exportCSV()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Exportar CSV
+    </button>
+  </section>
 
-    <!-- TABLE -->
-    <div class="table-wrap">
-      <div class="table-header">
-        <span class="table-title">Usuários cadastrados</span>
-        <span class="table-count" id="table-count"></span>
-      </div>
-      <div id="table-body">
-        <div class="loading-state"><span class="spinner"></span></div>
-      </div>
+  <!-- TABLE -->
+  <main class="table-container">
+    <div class="table-header-info">
+      <div>Listagem de Usuários</div>
+      <div id="table-count">—</div>
     </div>
-  </div>
+    <div id="table-body">
+      <div class="loading-state"><span class="spinner"></span> Carregando...</div>
+    </div>
+  </main>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ── CONFIG ────────────────────────────────────────────────────────
-const ADMIN_PASSWORD = '15091989';
-const SUPABASE_URL = 'https://yclvvfapkdwltayuiivy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbHZ2ZmFwa2R3bHRheXVpaXZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NzExMDMsImV4cCI6MjA5NDU0NzEwM30.O4fuDlL_KGPPO9WHaazrOtbkfO5KVpbVwpND5sVH0IA';
+// ── CONFIG ────────────────────────────────────────────────
+var ADMIN_PASSWORD = '15091989';
+var SUPABASE_URL   = 'https://yclvvfapkdwltayuiivy.supabase.co';
+var SUPABASE_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbHZ2ZmFwa2R3bHRheXVpaXZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NzExMDMsImV4cCI6MjA5NDU0NzEwM30.O4fuDlL_KGPPO9WHaazrOtbkfO5KVpbVwpND5sVH0IA';
 
-// ── STATE ─────────────────────────────────────────────────────────
+// ── STATE ─────────────────────────────────────────────────
 var sb;
 var allUsers = [];
 var currentFilter = 'todos';
 
-function initSupabase() {
-  if (typeof supabase !== 'undefined' && !sb) {
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
+function initSb() {
+  if (!sb && typeof supabase !== 'undefined')
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   return !!sb;
 }
 
-// ── LOGIN ─────────────────────────────────────────────────────────
-document.getElementById('admin-pass').addEventListener('keydown', e => {
+// ── LOGIN ─────────────────────────────────────────────────
+document.getElementById('admin-pass').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') doLogin();
 });
 
 function doLogin() {
-  initSupabase();
-  const pass = document.getElementById('admin-pass').value;
+  initSb();
+  var pass = document.getElementById('admin-pass').value;
   if (pass === ADMIN_PASSWORD) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-screen').style.display = 'block';
-    sessionStorage.setItem('fa_admin', '1');
+    sessionStorage.setItem('fa_admin','1');
     loadData();
   } else {
     document.getElementById('login-err').textContent = 'Senha incorreta.';
@@ -337,9 +244,8 @@ function doLogout() {
   document.getElementById('admin-pass').value = '';
 }
 
-// Auto-login se já autenticado
 window.addEventListener('load', function() {
-  initSupabase();
+  initSb();
   if (sessionStorage.getItem('fa_admin') === '1') {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-screen').style.display = 'block';
@@ -347,269 +253,268 @@ window.addEventListener('load', function() {
   }
 });
 
-// ── LOAD DATA ─────────────────────────────────────────────────────
+// ── LOAD DATA ─────────────────────────────────────────────
 async function loadData() {
-  if (!initSupabase()) {
-    document.getElementById('table-body').innerHTML = '<div class="empty-state">Erro: recarregue a pagina.</div>';
+  if (!initSb()) {
+    document.getElementById('table-body').innerHTML = '<div class="empty-state">Erro de conexao. Recarregue a pagina.</div>';
     return;
   }
-  document.getElementById('table-body').innerHTML = '<div class="loading-state"><span class="spinner"></span></div>';
+  document.getElementById('table-body').innerHTML = '<div class="loading-state"><span class="spinner"></span> Carregando...</div>';
 
   try {
-    // Busca profiles (cadastros)
-    const { data: profiles, error: e1 } = await sb
-      .from('profiles')
-      .select('*')
-      .order('created_at', { ascending: false });
+    var r1 = await sb.from('profiles').select('*').order('created_at', {ascending:false});
+    var r2 = await sb.from('assinaturas').select('email,ativo,plano,data_compra,updated_at');
 
-    if (e1) throw e1;
+    if (r1.error) throw r1.error;
+    if (r2.error) throw r2.error;
 
-    // Busca assinaturas (PRO)
-    const { data: assinaturas, error: e2 } = await sb
-      .from('assinaturas')
-      .select('email, ativo, plano, data_compra, updated_at');
+    var profiles   = r1.data || [];
+    var assinaturas = r2.data || [];
 
-    if (e2) throw e2;
+    var assMap = {};
+    assinaturas.forEach(function(a){ assMap[a.email] = a; });
 
-    // Merge
-    const assMap = {};
-    (assinaturas || []).forEach(a => { assMap[a.email] = a; });
+    allUsers = profiles.map(function(p){
+      return Object.assign({}, p, {
+        assinatura: assMap[p.email] || null,
+        isPro: !!(assMap[p.email] && assMap[p.email].ativo)
+      });
+    });
 
-    allUsers = (profiles || []).map(p => ({
-      ...p,
-      assinatura: assMap[p.email] || null,
-      isPro: !!(assMap[p.email] && assMap[p.email].ativo)
-    }));
-
-    // Também inclui assinantes que podem não ter profile ainda
-    (assinaturas || []).forEach(a => {
-      if (!profiles || !profiles.find(p => p.email === a.email)) {
-        allUsers.push({
-          id: null, email: a.email, name: null, whatsapp: null,
-          plan: 'pro', created_at: a.data_compra,
-          assinatura: a, isPro: a.ativo
-        });
+    // Inclui assinantes sem cadastro
+    assinaturas.forEach(function(a){
+      if (!profiles.find(function(p){ return p.email === a.email; })) {
+        allUsers.push({ id:null, name:null, email:a.email, whatsapp:null,
+          created_at: a.data_compra, assinatura:a, isPro:a.ativo });
       }
     });
 
     updateMetrics();
-    renderTable();
+    filterTable();
 
-    const now = new Date();
+    var now = new Date();
     document.getElementById('last-update').textContent =
-      'Atualizado às ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+      'Atualizado às ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 
-  } catch (err) {
-    console.error(err);
+  } catch(err) {
     document.getElementById('table-body').innerHTML =
-      '<div class="empty-state">Erro ao carregar dados: ' + err.message + '</div>';
-    showToast('Erro ao carregar dados', 'error');
+      '<div class="empty-state">Erro ao carregar: ' + err.message + '</div>';
+    showToast('Erro ao carregar dados','error');
   }
 }
 
-// ── METRICS ──────────────────────────────────────────────────────
+// ── METRICS ───────────────────────────────────────────────
 function updateMetrics() {
-  const total = allUsers.length;
-  const pro = allUsers.filter(u => u.isPro).length;
-  const free = total - pro;
-  const conv = total > 0 ? Math.round((pro / total) * 100) : 0;
-  const comWhats = allUsers.filter(u => u.whatsapp).length;
-
-  const hoje = new Date().toISOString().split('T')[0];
-  const cadastrosHoje = allUsers.filter(u => u.created_at && u.created_at.startsWith(hoje)).length;
+  var total = allUsers.length;
+  var pro   = allUsers.filter(function(u){ return u.isPro; }).length;
+  var free  = total - pro;
+  var conv  = total > 0 ? Math.round(pro/total*100) : 0;
+  var hoje  = new Date().toISOString().split('T')[0];
+  var novos = allUsers.filter(function(u){ return u.created_at && u.created_at.startsWith(hoje); }).length;
+  var comW  = allUsers.filter(function(u){ return u.whatsapp; }).length;
 
   document.getElementById('m-total').textContent = total;
-  document.getElementById('m-pro').textContent = pro;
-  document.getElementById('m-free').textContent = free;
-  document.getElementById('m-conv').textContent = conv + '%';
-  document.getElementById('m-hoje').textContent = cadastrosHoje;
-  document.getElementById('m-whats').textContent = comWhats;
+  document.getElementById('m-pro').textContent   = pro;
+  document.getElementById('m-free').textContent  = free;
+  document.getElementById('m-conv').textContent  = conv + '%';
+  document.getElementById('m-hoje').textContent  = novos;
+  document.getElementById('m-whats').textContent = comW;
 }
 
-// ── FILTER ───────────────────────────────────────────────────────
+// ── FILTER ────────────────────────────────────────────────
 function setFilter(f, btn) {
   currentFilter = f;
-  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
   filterTable();
 }
 
 function filterTable() {
-  const q = document.getElementById('search-input').value.toLowerCase().trim();
-  const hoje = new Date().toISOString().split('T')[0];
+  var q    = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  var hoje = new Date().toISOString().split('T')[0];
 
-  let filtered = allUsers.filter(u => {
-    if (currentFilter === 'pro') return u.isPro;
-    if (currentFilter === 'free') return !u.isPro;
+  var filtered = allUsers.filter(function(u) {
+    if (currentFilter === 'pro')       return u.isPro;
+    if (currentFilter === 'free')      return !u.isPro;
     if (currentFilter === 'sem-whats') return !u.whatsapp;
-    if (currentFilter === 'hoje') return u.created_at && u.created_at.startsWith(hoje);
+    if (currentFilter === 'hoje')      return u.created_at && u.created_at.startsWith(hoje);
     return true;
   });
 
   if (q) {
-    filtered = filtered.filter(u =>
-      (u.name || '').toLowerCase().includes(q) ||
-      (u.email || '').toLowerCase().includes(q) ||
-      (u.whatsapp || '').includes(q)
-    );
+    filtered = filtered.filter(function(u) {
+      return (u.name  || '').toLowerCase().includes(q) ||
+             (u.email || '').toLowerCase().includes(q) ||
+             (u.whatsapp || '').includes(q);
+    });
   }
 
   renderTable(filtered);
 }
 
-// ── RENDER TABLE ─────────────────────────────────────────────────
-function renderTable(users) {
-  const data = users !== undefined ? users : allUsers;
-  document.getElementById('table-count').textContent = data.length + ' usuário(s)';
+// ── RENDER TABLE ──────────────────────────────────────────
+function renderTable(data) {
+  document.getElementById('table-count').textContent = (data.length) + ' usuário(s) encontrado(s)';
 
-  if (!data.length) {
-    document.getElementById('table-body').innerHTML = '<div class="empty-state">Nenhum usuário encontrado</div>';
+  if (!data || !data.length) {
+    document.getElementById('table-body').innerHTML = '<div class="empty-state">Nenhum usuário encontrado.</div>';
     return;
   }
 
-  const rows = data.map(u => {
-    const nome = u.name || '<span style="color:var(--text3)">—</span>';
-    const email = u.email || '—';
-    const whats = u.whatsapp ? formatWhats(u.whatsapp) : '<span style="color:var(--text3)">—</span>';
-    const whatsLink = u.whatsapp
-      ? `<a class="whats-link" href="https://wa.me/55${u.whatsapp}" target="_blank">${formatWhats(u.whatsapp)}</a>`
-      : '<span style="color:var(--text3)">—</span>';
+  var hoje = new Date().toISOString().split('T')[0];
 
-    const plano = u.isPro
-      ? '<span class="badge badge-pro">✦ PRO</span>'
-      : '<span class="badge badge-free">Free</span>';
+  var rows = data.map(function(u) {
+    var isNovo   = u.created_at && u.created_at.startsWith(hoje);
+    var novoBadge = isNovo ? '<span class="badge-new">Novo</span>' : '';
 
-    const hoje = new Date().toISOString().split('T')[0];
-    const isNovo = u.created_at && u.created_at.startsWith(hoje);
-    const novoBadge = isNovo ? ' <span class="badge badge-new">Novo</span>' : '';
+    // Nome: se não tem, extrai prefixo do email
+    var nomeDisplay;
+    if (u.name) {
+      nomeDisplay = escHtml(u.name) + novoBadge;
+    } else {
+      var prefix = (u.email || '').split('@')[0];
+      nomeDisplay = '<span class="anonymous-user">Membro PRO (' + escHtml(prefix) + ')</span>' + novoBadge;
+    }
 
-    const data_cad = u.created_at ? formatDate(u.created_at) : '—';
-    const data_pag = u.assinatura && u.assinatura.data_compra ? formatDate(u.assinatura.data_compra) : '—';
+    var emailDisplay = u.email
+      ? '<span title="' + escHtml(u.email) + '">' + escHtml(u.email) + '</span>'
+      : '<span class="empty-dash">—</span>';
 
-    const btnAcao = u.isPro
-      ? `<button class="action-btn btn-desativar" onclick="togglePro('${u.email}', false, this)">Desativar PRO</button>`
-      : `<button class="action-btn btn-ativar" onclick="togglePro('${u.email}', true, this)">Ativar PRO</button>`;
+    var whatsDisplay = u.whatsapp
+      ? '<a class="whatsapp-link" href="https://wa.me/55' + u.whatsapp + '" target="_blank">' + fmtWhats(u.whatsapp) + '</a>'
+      : '<span class="empty-dash">—</span>';
 
-    return `<tr>
-      <td><div class="td-name">${nome}${novoBadge}</div></td>
-      <td><div class="td-email" title="${email}">${email}</div></td>
-      <td class="td-whats">${whatsLink}</td>
-      <td>${plano}</td>
-      <td class="td-date">${data_cad}</td>
-      <td class="td-date">${data_pag}</td>
-      <td>${btnAcao}</td>
-    </tr>`;
+    var planBadge = u.isPro
+      ? '<span class="badge-plan pro">PRO</span>'
+      : '<span class="badge-plan free">Free</span>';
+
+    var dataCad = u.created_at ? fmtDate(u.created_at) : '<span class="empty-dash">—</span>';
+    var dataPag = (u.assinatura && u.assinatura.data_compra) ? fmtDate(u.assinatura.data_compra) : '<span class="empty-dash">—</span>';
+
+    var btnAcao = u.isPro
+      ? '<button class="btn btn-action-deactivate" onclick="togglePro(\'' + escHtml(u.email) + '\',false,this)">Desativar</button>'
+      : '<button class="btn btn-action-activate"   onclick="togglePro(\'' + escHtml(u.email) + '\',true,this)">Ativar PRO</button>';
+
+    return '<tr>' +
+      '<td class="col-name">'   + nomeDisplay  + '</td>' +
+      '<td class="col-email">'  + emailDisplay + '</td>' +
+      '<td class="col-whatsapp">'+ whatsDisplay + '</td>' +
+      '<td class="col-plan">'   + planBadge    + '</td>' +
+      '<td class="col-date">'   + dataCad      + '</td>' +
+      '<td class="col-date">'   + dataPag      + '</td>' +
+      '<td class="col-action">' + btnAcao      + '</td>' +
+    '</tr>';
   }).join('');
 
-  document.getElementById('table-body').innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Email</th>
-          <th>WhatsApp</th>
-          <th>Plano</th>
-          <th>Cadastro</th>
-          <th>Pagamento</th>
-          <th>Ação</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>`;
+  document.getElementById('table-body').innerHTML =
+    '<table>' +
+      '<thead><tr>' +
+        '<th class="col-name">Nome</th>' +
+        '<th class="col-email">Email</th>' +
+        '<th class="col-whatsapp">WhatsApp</th>' +
+        '<th class="col-plan">Plano</th>' +
+        '<th class="col-date">Cadastro</th>' +
+        '<th class="col-date">Pagamento</th>' +
+        '<th class="col-action">Ação</th>' +
+      '</tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    '</table>';
 }
 
-// ── TOGGLE PRO ────────────────────────────────────────────────────
+// ── TOGGLE PRO ────────────────────────────────────────────
 async function togglePro(email, ativar, btn) {
-  if (!initSupabase()) { showToast('Erro de conexao', 'error'); return; }
+  if (!initSb()) { showToast('Erro de conexao','error'); return; }
   btn.classList.add('btn-loading');
   btn.textContent = '...';
 
   try {
     if (ativar) {
-      // Upsert na tabela assinaturas
-      const { error } = await sb.from('assinaturas').upsert({
-        email,
-        ativo: true,
-        plano: 'pro',
+      var res = await sb.from('assinaturas').upsert({
+        email: email, ativo: true, plano: 'pro',
         data_compra: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at:  new Date().toISOString()
       }, { onConflict: 'email' });
-      if (error) throw error;
+      if (res.error) throw res.error;
       showToast('✦ PRO ativado para ' + email, 'success');
     } else {
-      const { error } = await sb.from('assinaturas')
+      var res2 = await sb.from('assinaturas')
         .update({ ativo: false, updated_at: new Date().toISOString() })
         .eq('email', email);
-      if (error) throw error;
+      if (res2.error) throw res2.error;
       showToast('PRO desativado para ' + email, 'success');
     }
 
-    // Atualizar state local
-    const u = allUsers.find(x => x.email === email);
+    // Atualiza state local
+    var u = allUsers.find(function(x){ return x.email === email; });
     if (u) {
       u.isPro = ativar;
       if (!u.assinatura) u.assinatura = {};
       u.assinatura.ativo = ativar;
       if (ativar) u.assinatura.data_compra = new Date().toISOString();
     }
-
     updateMetrics();
     filterTable();
 
-  } catch (err) {
+  } catch(err) {
     showToast('Erro: ' + err.message, 'error');
     btn.classList.remove('btn-loading');
-    btn.textContent = ativar ? 'Ativar PRO' : 'Desativar PRO';
+    btn.textContent = ativar ? 'Ativar PRO' : 'Desativar';
   }
 }
 
-// ── EXPORT CSV ────────────────────────────────────────────────────
+// ── EXPORT CSV ────────────────────────────────────────────
 function exportCSV() {
-  const headers = ['Nome', 'Email', 'WhatsApp', 'Plano', 'Data Cadastro', 'Data Pagamento'];
-  const rows = allUsers.map(u => [
-    u.name || '',
-    u.email || '',
-    u.whatsapp ? formatWhats(u.whatsapp) : '',
-    u.isPro ? 'PRO' : 'Free',
-    u.created_at ? formatDate(u.created_at) : '',
-    u.assinatura && u.assinatura.data_compra ? formatDate(u.assinatura.data_compra) : ''
-  ]);
-
-  const csv = [headers, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
+  var headers = ['Nome','Email','WhatsApp','Plano','Data Cadastro','Data Pagamento'];
+  var rows = allUsers.map(function(u){
+    return [
+      u.name || '',
+      u.email || '',
+      u.whatsapp ? fmtWhats(u.whatsapp) : '',
+      u.isPro ? 'PRO' : 'Free',
+      u.created_at ? fmtDate(u.created_at) : '',
+      (u.assinatura && u.assinatura.data_compra) ? fmtDate(u.assinatura.data_compra) : ''
+    ];
+  });
+  var csv = [headers].concat(rows).map(function(r){
+    return r.map(function(v){ return '"' + String(v).replace(/"/g,'""') + '"'; }).join(',');
+  }).join('\n');
+  var blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href     = url;
   a.download = 'foodart-usuarios-' + new Date().toISOString().split('T')[0] + '.csv';
   a.click();
   URL.revokeObjectURL(url);
   showToast('CSV exportado!', 'success');
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────
-function formatDate(iso) {
+// ── HELPERS ───────────────────────────────────────────────
+function fmtDate(iso) {
   if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+  var d = new Date(iso);
+  return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 
-function formatWhats(digits) {
-  if (!digits) return '';
-  const d = digits.replace(/\D/g, '');
-  if (d.length === 11) return '(' + d.substring(0,2) + ') ' + d.substring(2,7) + '-' + d.substring(7);
-  return digits;
+function fmtWhats(d) {
+  if (!d) return '';
+  d = d.replace(/\D/g,'');
+  return d.length === 11 ? '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7) : d;
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function showToast(msg, type) {
-  const t = document.getElementById('toast');
+  var t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show' + (type ? ' ' + type : '');
   clearTimeout(window._tt);
-  window._tt = setTimeout(() => t.classList.remove('show'), 3000);
+  window._tt = setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
-// Auto refresh a cada 60s quando na tela
-setInterval(() => {
+// Auto refresh a cada 60s
+setInterval(function(){
   if (sessionStorage.getItem('fa_admin') === '1') loadData();
 }, 60000);
 </script>
