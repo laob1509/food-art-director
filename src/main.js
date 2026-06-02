@@ -310,17 +310,253 @@ async function startWizard(){
     .eq('email', session.user.email)
     .single();
 
-  if (!assinatura || !assinatura.ativo) {
-    document.getElementById('screen-welcome').style.display = 'none';
-    document.getElementById('screen-pro').style.display = 'flex';
-    return;
-  }
+  const isPro = assinatura && assinatura.ativo;
+  window._userIsPro = isPro;
+  window._userEmail = session.user.email;
 
   document.getElementById('screen-welcome').style.display='none';
   document.getElementById('screen-wizard').style.display='block';
   document.getElementById('nav-bar').style.display='flex';
+
+  if (!isPro) {
+    S.lang = 'en'; // free always EN
+    applyFreeRestrictions();
+    setTimeout(updateFreeCounter, 500);
+  } else {
+    removeFreeRestrictions();
+  }
+
   renderDots();updateProgress();updateNav();
 }
+
+// ── FREEMIUM RESTRICTIONS ────────────────────────────────────────────────────
+
+// P1: free intents
+var FREE_INTENTS = ['crave','comfort'];
+// P2: free foods — first item per category accordion
+var FREE_FOODS = ['paofrances','coffee','burger','cake','espresso','brigadeiro','salad','acai','pizza'];
+// P3: free style
+var FREE_STYLES = ['clean'];
+// P4: free angle
+var FREE_ANGLES = ['eyelevel'];
+// P5: free format
+var FREE_FORMATS = ['story'];
+// P6: free context
+var FREE_CONTEXTS = ['normal'];
+// P7: free photo
+var FREE_PHOTOS = ['editorial50','morning'];
+// P8: free env
+var FREE_ENVS = ['french_bakery'];
+
+function applyFreeRestrictions() {
+  if (!document.getElementById('free-lock-styles')) {
+    var s = document.createElement('style');
+    s.id = 'free-lock-styles';
+    s.textContent = [
+      '.pro-locked { opacity:0.35 !important; pointer-events:none !important; }',
+      '.pro-locked-click { position:relative !important; cursor:pointer !important; opacity:0.5 !important; }',
+      '.pro-lock-badge {',
+        'position:absolute; top:4px; right:4px;',
+        'background:rgba(0,0,0,0.72);',
+        'border:1px solid rgba(200,134,10,0.45);',
+        'border-radius:4px; font-size:10px; padding:1px 5px;',
+        'z-index:10; pointer-events:none; line-height:1.5; color:#f0c040;',
+      '}',
+      '.free-lang-notice {',
+        'font-family:"DM Mono",monospace; font-size:11px;',
+        'color:rgba(200,134,10,0.9); background:rgba(200,134,10,0.08);',
+        'border:1px solid rgba(200,134,10,0.15); border-radius:6px;',
+        'padding:8px 12px; margin-bottom:12px; text-align:center;',
+      '}',
+      '.pro-upgrade-modal-overlay {',
+        'position:fixed; inset:0; background:rgba(0,0,0,0.78); z-index:99999;',
+        'display:flex; align-items:center; justify-content:center; padding:20px;',
+      '}',
+      '.pro-upgrade-modal {',
+        'background:linear-gradient(160deg,rgba(22,18,10,0.99),rgba(14,12,7,1));',
+        'border:1px solid rgba(200,134,10,0.22); border-radius:16px;',
+        'padding:28px 24px; max-width:320px; width:100%; text-align:center;',
+      '}',
+      '.pro-upgrade-modal h3 { font-family:"Playfair Display",serif; font-size:19px; color:#f0e8d0; margin-bottom:8px; }',
+      '.pro-upgrade-modal p { font-family:"DM Mono",monospace; font-size:11px; color:rgba(200,180,140,0.6); margin-bottom:20px; line-height:1.6; }',
+      '.pro-upgrade-modal .btn-upgrade { width:100%; padding:14px; margin-bottom:10px;',
+        'background:linear-gradient(160deg,rgba(160,100,8,0.92),rgba(100,55,4,0.96));',
+        'border:1px solid rgba(200,134,10,0.22); border-radius:10px;',
+        'color:rgba(240,220,180,0.95); font-family:"Syne",sans-serif;',
+        'font-size:13px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; cursor:pointer;',
+      '}',
+      '.pro-upgrade-modal .btn-cancel { background:none; border:none; color:rgba(200,180,140,0.5);',
+        'font-family:"DM Mono",monospace; font-size:11px; cursor:pointer; padding:6px;',
+      '}'
+    ].join('\n');
+    document.head.appendChild(s);
+  }
+
+  function lockEl(el) {
+    if (!el) return;
+    if (el.dataset.locked === '1') return;
+    el.dataset.locked = '1';
+    el.style.opacity = '0.42';
+    el.style.cursor = 'pointer';
+    el.style.filter = 'grayscale(0.4)';
+    // Inject lock icon as last child — respects overflow:hidden by staying inside bounds
+    var lbl = el.querySelector('.i-name, .style-lbl, .fmt-name, .ctx-name, .angle-lbl, .p-lens, .env-name');
+    if (lbl) {
+      lbl.style.display = 'flex';
+      lbl.style.alignItems = 'center';
+      lbl.style.justifyContent = 'center';
+      lbl.style.gap = '4px';
+      var span = document.createElement('span');
+      span.textContent = '\uD83D\uDD12';
+      span.style.fontSize = '11px';
+      lbl.appendChild(span);
+    } else {
+      // For opt-card buttons (food items, contexts, formats) — append emoji to text
+      var orig = el.textContent;
+      el.textContent = orig + ' \uD83D\uDD12';
+    }
+    // Block click
+    el.addEventListener('click', function lockHandler(ev) {
+      if (el.dataset.locked === '1') {
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        ev.stopPropagation();
+        showUpgradeModal();
+      }
+    }, true);
+  }
+
+  // P1 — lock intents not in FREE_INTENTS
+  document.querySelectorAll('[data-g="intent"]').forEach(function(el) {
+    if (FREE_INTENTS.indexOf(el.dataset.v) === -1) lockEl(el);
+  });
+  var panCard = document.getElementById('panini-entry-card');
+  if (panCard) lockEl(panCard);
+
+  // P2 — lock foods not in FREE_FOODS
+  document.querySelectorAll('[data-g="food"]').forEach(function(el) {
+    if (FREE_FOODS.indexOf(el.dataset.v) === -1) lockEl(el);
+  });
+
+  // P3 — lock styles not in FREE_STYLES
+  document.querySelectorAll('[data-g="style"]').forEach(function(el) {
+    if (FREE_STYLES.indexOf(el.dataset.v) === -1) lockEl(el);
+  });
+
+  // P4 — lock angles not in FREE_ANGLES
+  document.querySelectorAll('[data-g="angle"]').forEach(function(el) {
+    if (FREE_ANGLES.indexOf(el.dataset.v) === -1) lockEl(el);
+  });
+
+  // P5 — lock formats not in FREE_FORMATS
+  document.querySelectorAll('[data-g="format"]').forEach(function(el) {
+    if (FREE_FORMATS.indexOf(el.dataset.v) === -1) lockEl(el);
+  });
+
+  // P6 — lock contexts not in FREE_CONTEXTS
+  document.querySelectorAll('[data-g="context"]').forEach(function(el) {
+    if (FREE_CONTEXTS.indexOf(el.dataset.v) === -1) lockEl(el);
+  });
+
+  // P7 — lock photos not in FREE_PHOTOS
+  document.querySelectorAll('[data-g="photo"]').forEach(function(el) {
+    if (FREE_PHOTOS.indexOf(el.dataset.v) === -1) lockEl(el);
+  });
+
+  // P8 — lock envs not in FREE_ENVS
+  document.querySelectorAll('[data-g="env"]').forEach(function(el) {
+    if (FREE_ENVS.indexOf(el.dataset.v) === -1) lockEl(el);
+  });
+
+  // P9 — lock advanced fields; auto-activate t-rea and t-neg
+  var nota = document.getElementById('nota');
+  if (nota) { nota.disabled = true; nota.placeholder = 'Disponivel no plano PRO'; nota.style.opacity = '0.35'; }
+  ['t-str','t-cam','t-sty'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.disabled = true;
+    var lbl = el.closest ? el.closest('label') : null;
+    if (lbl) lbl.style.opacity = '0.35';
+  });
+  var trea = document.getElementById('t-rea'); if (trea) trea.checked = true;
+  var tneg = document.getElementById('t-neg'); if (tneg) tneg.checked = true;
+
+  // P10 — lock variation buttons + PT language
+  var vb = document.getElementById('btn-variation'); if (vb) lockEl(vb);
+  var vbf = document.getElementById('btn-variation-full'); if (vbf) lockEl(vbf);
+  var lpt = document.getElementById('lpt'); if (lpt) lockEl(lpt);
+
+  // Add free notice
+  if (!document.getElementById('free-lang-notice')) {
+    var outputStep = document.getElementById('step-10');
+    if (outputStep) {
+      var notice = document.createElement('div');
+      notice.id = 'free-lang-notice';
+      notice.className = 'free-lang-notice';
+      notice.textContent = 'Plano Free — prompts em ingles. Assine o PRO para portugues.';
+      outputStep.insertBefore(notice, outputStep.firstChild.nextSibling);
+    }
+  }
+}
+
+function removeFreeRestrictions() {
+  document.querySelectorAll('.pro-locked-click').forEach(function(el) {
+    el.classList.remove('pro-locked-click');
+    el.removeEventListener('click', showUpgradeModal, true);
+  });
+  document.querySelectorAll('.pro-locked').forEach(function(el) { el.classList.remove('pro-locked'); });
+  var nota = document.getElementById('nota');
+  if (nota) { nota.disabled = false; nota.style.opacity=''; }
+  ['t-str','t-cam','t-sty'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.disabled = false; el.closest && el.closest('label') && (el.closest('label').style.opacity=''); }
+  });
+  var notice = document.getElementById('free-lang-notice');
+  if (notice) notice.remove();
+}
+
+function showUpgradeModal(e) {
+  if (e) { e.preventDefault(); e.stopImmediatePropagation(); }
+  if (document.getElementById('pro-upgrade-overlay')) return;
+  var overlay = document.createElement('div');
+  overlay.id = 'pro-upgrade-overlay';
+  overlay.className = 'pro-upgrade-modal-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  var box = document.createElement('div');
+  box.className = 'pro-upgrade-modal';
+  box.style.cssText = 'background:linear-gradient(160deg,rgba(22,18,10,0.99),rgba(14,12,7,1));border:1px solid rgba(200,134,10,0.22);border-radius:16px;padding:32px 24px;max-width:320px;width:100%;text-align:center;';
+  box.innerHTML = [
+    '<div style="font-size:28px;margin-bottom:12px;color:rgba(200,134,10,0.9);">&#128274;</div>',
+    '<h3 style="font-family:Playfair Display,serif;font-size:19px;color:#f0e8d0;margin-bottom:8px;">Recurso PRO</h3>',
+    '<p style="font-family:DM Mono,monospace;font-size:11px;color:rgba(200,180,140,0.6);margin-bottom:22px;line-height:1.6;">',
+      'Esta opcao e exclusiva do plano PRO.<br>Assine e desbloqueie todos os estilos,<br>angulos, formatos, idiomas e muito mais.',
+    '</p>',
+    '<button onclick="window.open(\'https://pay.kiwify.com.br/RPjrbot\',\'_blank\');closePUpgradeModal()" style="',
+      'width:100%;padding:14px;margin-bottom:10px;cursor:pointer;',
+      'background:linear-gradient(160deg,rgba(160,100,8,0.92),rgba(100,55,4,0.96));',
+      'border:1px solid rgba(200,134,10,0.22);border-radius:10px;',
+      'color:rgba(240,220,180,0.95);font-family:Syne,sans-serif;',
+      'font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;',
+    '">Quero o PRO</button>',
+    '<button onclick="closePUpgradeModal()" style="',
+      'background:none;border:none;color:rgba(200,180,140,0.45);',
+      'font-family:DM Mono,monospace;font-size:11px;cursor:pointer;padding:8px;',
+    '">Agora nao</button>'
+  ].join('');
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(ev) { if (ev.target === overlay) closePUpgradeModal(); });
+}
+
+function closePUpgradeModal() {
+  var o = document.getElementById('pro-upgrade-overlay');
+  if (o) o.remove();
+}
+
+window.showUpgradeModal = showUpgradeModal;
+window.applyFreeRestrictions = applyFreeRestrictions;
+window.removeFreeRestrictions = removeFreeRestrictions;
+window.closePUpgradeModal = closePUpgradeModal;
 
 function renderDots(){
   var d=document.getElementById('prog-dots');d.innerHTML='';
@@ -424,12 +660,174 @@ document.querySelectorAll('[data-g="intent"]').forEach(function(el){if(el.datase
   if(firstBtn){firstBtn.classList.add('open');}
 })();
 
-function generatePrompt(){
+
+// ── LIMITE DE GERAÇÕES FREE (3/dia) ──────────────────────────────
+
+async function checkFreeLimit() {
+  // PRO users have no limit
+  if (window._userIsPro) return true;
+
+  const email = window._userEmail;
+  if (!email) return true;
+
+  const today = new Date().toISOString().split('T')[0];
+
+  try {
+    // Check existing count for today
+    const { data, error } = await supabase
+      .from('free_generations')
+      .select('count, date')
+      .eq('email', email)
+      .eq('date', today)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 = no rows found, that's fine
+      console.error('Limit check error:', error);
+      return true; // allow on error to not block users
+    }
+
+    const count = data ? data.count : 0;
+
+    if (count >= 3) {
+      showLimitModal(count);
+      return false;
+    }
+
+    return true;
+  } catch(e) {
+    console.error('checkFreeLimit error:', e);
+    return true;
+  }
+}
+
+async function incrementFreeGeneration() {
+  if (window._userIsPro) return;
+
+  const email = window._userEmail;
+  if (!email) return;
+
+  const today = new Date().toISOString().split('T')[0];
+
+  try {
+    // Try to get existing record
+    const { data } = await supabase
+      .from('free_generations')
+      .select('id, count')
+      .eq('email', email)
+      .eq('date', today)
+      .single();
+
+    if (data) {
+      // Update count
+      await supabase
+        .from('free_generations')
+        .update({ count: data.count + 1, updated_at: new Date().toISOString() })
+        .eq('id', data.id);
+    } else {
+      // Insert new record
+      await supabase
+        .from('free_generations')
+        .insert({ email, date: today, count: 1, updated_at: new Date().toISOString() });
+    }
+  } catch(e) {
+    console.error('incrementFreeGeneration error:', e);
+  }
+}
+
+function showLimitModal(count) {
+  if (document.getElementById('limit-modal-overlay')) return;
+
+  var overlay = document.createElement('div');
+  overlay.id = 'limit-modal-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);';
+
+  var box = document.createElement('div');
+  box.style.cssText = 'background:linear-gradient(160deg,rgba(22,18,10,0.99),rgba(14,12,7,1));border:1px solid rgba(200,134,10,0.22);border-radius:16px;padding:32px 24px;max-width:320px;width:100%;text-align:center;';
+
+  var remaining = Math.max(0, 3 - (count || 3));
+
+  box.innerHTML =
+    '<div style="font-size:36px;margin-bottom:12px;">\u23F3</div>' +
+    '<h3 style="font-family:Playfair Display,serif;font-size:19px;color:#f0e8d0;margin-bottom:10px;">Limite diario atingido</h3>' +
+    '<p style="font-family:DM Mono,monospace;font-size:11px;color:rgba(200,180,140,0.65);margin-bottom:8px;line-height:1.7;">' +
+      'Voce usou suas <strong style="color:#f0a020;">3 geracoes gratuitas</strong> de hoje.<br>' +
+      'O limite renova automaticamente a meia-noite.' +
+    '</p>' +
+    '<p style="font-family:DM Mono,monospace;font-size:11px;color:rgba(200,180,140,0.45);margin-bottom:24px;line-height:1.6;">' +
+      'Com o plano PRO voce gera prompts<br><strong style="color:#f0a020;">ilimitados</strong>, ' +
+      'desbloqueia todos os estilos,<br>angulos, formatos e muito mais.' +
+    '</p>' +
+    '<button id="btn-limit-pro" style="' +
+      'width:100%;padding:14px;margin-bottom:10px;cursor:pointer;' +
+      'background:linear-gradient(160deg,rgba(160,100,8,0.92),rgba(100,55,4,0.96));' +
+      'border:1px solid rgba(200,134,10,0.22);border-radius:10px;' +
+      'color:rgba(240,220,180,0.95);font-family:Syne,sans-serif;' +
+      'font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;">' +
+      '\u2726 Quero o PRO' +
+    '</button>' +
+    '<button id="btn-limit-cancel" style="' +
+      'background:none;border:none;color:rgba(200,180,140,0.4);' +
+      'font-family:DM Mono,monospace;font-size:11px;cursor:pointer;padding:8px;">' +
+      'Voltar e esperar amanha' +
+    '</button>';
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  document.getElementById('btn-limit-pro').addEventListener('click', function() {
+    window.open('https://pay.kiwify.com.br/RPjrbot', '_blank');
+    closeLimitModal();
+  });
+  document.getElementById('btn-limit-cancel').addEventListener('click', closeLimitModal);
+  overlay.addEventListener('click', function(ev) { if (ev.target === overlay) closeLimitModal(); });
+}
+
+function closeLimitModal() {
+  var o = document.getElementById('limit-modal-overlay');
+  if (o) o.remove();
+}
+
+window.closeLimitModal = closeLimitModal;
+
+async function updateFreeCounter() {
+  if (window._userIsPro) return;
+  const email = window._userEmail;
+  if (!email) return;
+  const today = new Date().toISOString().split('T')[0];
+  try {
+    const { data } = await supabase
+      .from('free_generations')
+      .select('count')
+      .eq('email', email)
+      .eq('date', today)
+      .single();
+    const used = data ? data.count : 0;
+    const remaining = Math.max(0, 3 - used);
+    var notice = document.getElementById('free-lang-notice');
+    if (notice) {
+      notice.textContent = 'Plano Free — prompts em ingles. ' + remaining + '/3 geracoes restantes hoje. Assine o PRO para ilimitado.';
+      if (remaining === 0) notice.style.color = 'rgba(231,76,60,0.9)';
+      else if (remaining === 1) notice.style.color = 'rgba(230,150,10,0.9)';
+      else notice.style.color = 'rgba(200,134,10,0.9)';
+    }
+  } catch(e) {}
+}
+window.updateFreeCounter = updateFreeCounter;
+
+
+async function generatePrompt(){
+  // Check free limit before generating
+  if (!window._userIsPro) {
+    var allowed = await checkFreeLimit();
+    if (!allowed) return;
+  }
+
   var ob=document.getElementById('output-body');
   ob.innerHTML='<div class="gen-state"><div class="gen-dots"><div class="gen-dot"></div><div class="gen-dot"></div><div class="gen-dot"></div></div><div class="gen-txt">Gerando seu prompt...</div></div>';
   document.getElementById('output-tags').style.display='none';
   renderSummary();
-  setTimeout(function(){
+  setTimeout(async function(){
     curPrompt=buildPrompt();
     renderPrompt();
     renderMoodSummary();
@@ -437,9 +835,16 @@ function generatePrompt(){
     if(vb) vb.style.display='inline-block';
     var vbf=document.getElementById('btn-variation-full');
     if(vbf) vbf.style.display='block';
+    // Increment free generation counter
+    if (!window._userIsPro) {
+      await incrementFreeGeneration();
+      updateFreeCounter();
+    }
   },700);
 }
 function buildPrompt(){
+  // Free users always get EN
+  if (!window._userIsPro) S.lang = 'en';
   var l=S.lang,food=FD[S.food];if(!food)return '';
   var parts=[],intent=S.intent?INTENTS[S.intent]:null;
   if(document.getElementById('t-str').checked)parts.push(l==='pt'?STR_PT:STR_EN);
@@ -474,6 +879,9 @@ function buildPrompt(){
   if(nota)parts.push((l==='pt'?'— OBSERVAÇÃO ADICIONAL —\n':'— ADDITIONAL NOTE —\n')+nota);
   parts.push(l==='pt'?'QUALIDADE FINAL\nFotorrealista. Ultra-detalhado. 4K–8K. Fotografia comercial profissional.\nZero artefatos CGI.':'FINAL QUALITY\nPhotorealistic. Ultra-detailed. 4K–8K. Professional commercial photography.\nZero CGI artifacts.');
   var result=parts.join('\n\n');
+  if (!window._userIsPro) {
+    result += '\n\n— Generated with Food Art Director Free — foodartdirector.com —';
+  }
   if(S.model==='midjourney'){result=result.replace(/^([A-ZÁÀÉÊÍÓÔÚÇ][A-ZÁÀÉÊÍÓÔÚÇ\s&\/\-]+)\n/gm,'');result=result.split('\n').filter(function(x){return x.trim();}).join(', ');if(result.length>600)result=result.substring(0,600)+'...';}
   else if(S.model==='dalle'&&result.length>1200)result=result.substring(0,1200)+'...';
   else if(S.model==='gemini')result=(l==='pt'?'Imagine uma cena de fotografia editorial de alimentos de altíssimo nível. ':'Imagine a high-end editorial food photography scene. ')+result;
@@ -1197,8 +1605,17 @@ function createAuthModal() {
         <div class="auth-title">Criar sua conta</div>
         <div class="auth-sub">Comece a criar prompts cinematográficos</div>
         <div class="auth-field">
+          <label class="auth-label">Nome</label>
+          <input class="auth-input" id="signup-name" type="text" placeholder="Seu nome" autocomplete="name">
+        </div>
+        <div class="auth-field">
           <label class="auth-label">Email</label>
           <input class="auth-input" id="signup-email" type="email" placeholder="seu@email.com" autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">WhatsApp</label>
+          <input class="auth-input" id="signup-whatsapp" type="tel" placeholder="(84) 99999-9999" autocomplete="tel" maxlength="15" oninput="formatWhatsApp(this)">
+          <div id="whatsapp-feedback" style="font-family:'DM Mono',monospace;font-size:10px;margin-top:4px;min-height:14px;"></div>
         </div>
         <div class="auth-field">
           <label class="auth-label">Senha</label>
@@ -1231,8 +1648,9 @@ function createAuthModal() {
   ['login-email','login-password'].forEach(id => {
     document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') authLogin(); });
   });
-  ['signup-email','signup-password'].forEach(id => {
-    document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') authSignup(); });
+  ['signup-email','signup-password','signup-name','signup-whatsapp'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => { if(e.key==='Enter') authSignup(); });
   });
   document.getElementById('forgot-email').addEventListener('keydown', e => { if(e.key==='Enter') authForgot(); });
 
@@ -1327,10 +1745,12 @@ function closeAuthModal() {
   const m = document.getElementById('auth-modal');
   if (m) m.style.display = 'none';
   // Limpar campos e erros
-  ['login-email','login-password','signup-email','signup-password'].forEach(id => {
+  ['login-email','login-password','signup-email','signup-password','signup-name','signup-whatsapp'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  const wf = document.getElementById('whatsapp-feedback');
+  if (wf) wf.textContent = '';
   ['login-error','signup-error','forgot-error'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = '';
@@ -1420,27 +1840,97 @@ async function authLogin() {
   }
 }
 
+// ── WhatsApp validation helpers ───────────────────────────────────
+var VALID_DDDS = [11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,41,42,43,44,45,46,47,48,49,51,53,54,55,61,62,63,64,65,66,67,68,69,71,73,74,75,77,79,81,82,83,84,85,86,87,88,89,91,92,93,94,95,96,97,98,99];
+
+function formatWhatsApp(input) {
+  var digits = input.value.replace(/\D/g,'');
+  var formatted = '';
+  if (digits.length > 0) formatted = '(' + digits.substring(0,2);
+  if (digits.length >= 3) formatted += ') ' + digits.substring(2, digits.length <= 10 ? 6 : 7);
+  if (digits.length >= 7 && digits.length <= 10) formatted += '-' + digits.substring(6,10);
+  else if (digits.length > 7) formatted += '-' + digits.substring(7,11);
+  input.value = formatted;
+  validateWhatsAppField(digits);
+}
+
+function validateWhatsAppField(digits) {
+  var fb = document.getElementById('whatsapp-feedback');
+  if (!fb) return true;
+  if (!digits || digits.length === 0) { fb.textContent=''; fb.style.color=''; return false; }
+  var ddd = parseInt(digits.substring(0,2));
+  if (digits.length < 2) { fb.textContent=''; return false; }
+  if (VALID_DDDS.indexOf(ddd) === -1) {
+    fb.textContent = 'DDD ' + (digits.substring(0,2)||'') + ' inválido';
+    fb.style.color = '#e05555'; return false;
+  }
+  if (digits.length < 11) {
+    fb.textContent = digits.length < 4 ? '' : 'Número incompleto';
+    fb.style.color = '#e05555'; return false;
+  }
+  if (digits[2] !== '9') {
+    fb.textContent = 'Celular deve começar com 9 após o DDD';
+    fb.style.color = '#e05555'; return false;
+  }
+  fb.textContent = '✓ Número válido';
+  fb.style.color = '#4caf7d';
+  return true;
+}
+
+function getWhatsAppDigits() {
+  var el = document.getElementById('signup-whatsapp');
+  return el ? el.value.replace(/\D/g,'') : '';
+}
+
 async function authSignup() {
+  const name = (document.getElementById('signup-name')||{value:''}).value.trim();
   const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
+  const whatsappDigits = getWhatsAppDigits();
   const errEl = document.getElementById('signup-error');
-  const btn = document.getElementById('signup-btn');
-  const btnTxt = document.getElementById('signup-btn-txt');
 
   errEl.textContent = '';
+  if (!name) { errEl.textContent = 'Informe seu nome.'; return; }
   if (!email) { errEl.textContent = 'Informe seu email.'; return; }
+
+  // Validate WhatsApp
+  var ddd = parseInt(whatsappDigits.substring(0,2));
+  if (!whatsappDigits || whatsappDigits.length < 11) {
+    errEl.textContent = 'Informe um número de WhatsApp válido com DDD.'; return;
+  }
+  if (VALID_DDDS.indexOf(ddd) === -1) {
+    errEl.textContent = 'DDD ' + whatsappDigits.substring(0,2) + ' inválido.'; return;
+  }
+  if (whatsappDigits[2] !== '9') {
+    errEl.textContent = 'Número de celular deve começar com 9 após o DDD.'; return;
+  }
   if (password.length < 6) { errEl.textContent = 'Senha deve ter ao menos 6 caracteres.'; return; }
 
   setLoading('signup-btn', 'signup-btn-txt', true, 'Criando conta...', 'Criar conta');
 
   try {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name: name, whatsapp: whatsappDigits } }
+    });
     if (error) {
       errEl.textContent = error.message === 'User already registered'
         ? 'Este email já está cadastrado.'
         : error.message;
       setLoading('signup-btn', 'signup-btn-txt', false, '', 'Criar conta');
       return;
+    }
+    // Save extra profile data to profiles table
+    if (data.user) {
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        email: email,
+        name: name,
+        whatsapp: whatsappDigits,
+        plan: 'free',
+        created_at: new Date().toISOString()
+      });
     }
     if (data.session) {
       closeAuthModal();
@@ -1474,6 +1964,7 @@ window.authForgot = authForgot;
 window.authLogin = authLogin;
 window.authSignup = authSignup;
 window.openAuthModal = openAuthModal;
+window.formatWhatsApp = formatWhatsApp;
 
 // ── INIT AUTH ─────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
